@@ -38,7 +38,7 @@ class Converter(object):
             assert isinstance(f, Feature)
             ms.append(pmml.MiningField(
                 invalidValueTreatment=f.invalid_value_treatment,
-                name=f.internal_name
+                name=f.external_name
             ))
         return ms
 
@@ -88,7 +88,7 @@ class PMMLBuilder(object):
             if isinstance(f, CategoricalFeature):
                 df = pmml.DerivedField(
                     name=f.internal_name,
-                    optype=f.optype,
+                    optype="continuous",
                     dataType="integer"
                 )
                 mv = pmml.MapValues(outputColumn='output', dataType='integer')
