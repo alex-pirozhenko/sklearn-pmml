@@ -40,6 +40,10 @@ class Converter(object):
                 invalidValueTreatment=f.invalid_value_treatment,
                 name=f.external_name
             ))
+        ms.append(pmml.MiningField(
+            name=schema.output.external_name,
+            usageType="predicted"
+        ))
         return ms
 
 
@@ -71,6 +75,7 @@ class PMMLBuilder(object):
     def build(self, obj, ctx):
         converter = self.find_converter(obj.__class__)
         assert converter is not None, "Can not find converter for {}".format(obj)
+        assert converter.is_applicable(obj, ctx)
         p = pmml.PMML(version="4.2")
         p.append(pmml.Header(**ctx.metadata))
         for el in self.data_description(obj, ctx):
@@ -106,6 +111,11 @@ class PMMLBuilder(object):
                     data_field.append(pmml.Value(value_=v))
 
                 td.append(df.append(mv.append(it)))
+        dd.append(pmml.DataField(
+            name=ctx.schema.output.external_name,
+            dataType=ctx.schema.output.data_type,
+            optype=ctx.schema.output.optype,
+        ))
         return dd, td
 
     @staticmethod
