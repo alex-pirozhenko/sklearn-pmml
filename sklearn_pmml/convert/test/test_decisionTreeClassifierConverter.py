@@ -8,7 +8,6 @@ from sklearn_pmml.convert.tree import DecisionTreeConverter
 
 
 class TestDecisionTreeClassifierConverter(TestCase):
-
     def setUp(self):
         np.random.seed(1)
         self.est = DecisionTreeClassifier(max_depth=2)
@@ -17,7 +16,7 @@ class TestDecisionTreeClassifierConverter(TestCase):
             [0, 1],
             [1, 0],
             [1, 1],
-            ], [0, 1, 1, 1])
+        ], [0, 1, 1, 1])
         self.converter = DecisionTreeConverter(
             mode=DecisionTreeConverter.MODE_CLASSIFICATION
         )
@@ -39,7 +38,6 @@ class TestDecisionTreeClassifierConverter(TestCase):
 
 
 class TestDecisionTreeRegressorConverter(TestCase):
-
     def setUp(self):
         np.random.seed(1)
         self.est = DecisionTreeRegressor(max_depth=2)
@@ -48,7 +46,7 @@ class TestDecisionTreeRegressorConverter(TestCase):
             [0, 1],
             [1, 0],
             [1, 1],
-            ], [0, 1, 1, 1])
+        ], [0, 1, 1, 1])
         self.converter = DecisionTreeConverter(
             mode=DecisionTreeConverter.MODE_REGRESSION
         )
