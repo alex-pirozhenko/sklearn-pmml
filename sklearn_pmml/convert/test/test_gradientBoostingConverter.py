@@ -24,9 +24,6 @@ class TestGradientBoostingClassifierConverter(TestCase):
             schema=Schema(features=[IntegerNumericFeature('x1'), StringCategoricalFeature('x2', ['zero', 'one']), ],
                           output=StringCategoricalFeature('output', ['neg', 'pos'])), metadata={})
 
-    def test_is_applicable(self):
-        self.fail()
-
     def test_transform(self):
         a = list(self.converter.transform(self.est, self.ctx))
         # TODO: add real tests
