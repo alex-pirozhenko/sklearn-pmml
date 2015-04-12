@@ -9,19 +9,13 @@ from sklearn_pmml.convert import estimator_to_converter
 
 
 class DecisionTreeConverter(Converter):
-    MODE_CLASSIFICATION = 'classification'
-    MODE_REGRESSION = 'regression'
-    __all_modes = {
-        MODE_CLASSIFICATION,
-        MODE_REGRESSION
-    }
 
     BINARY_SPLIT = 'binarySplit'
 
     OPERATOR_LE = 'lessOrEqual'
 
     def __init__(self, mode):
-        assert (mode is None) or (mode in self.__all_modes)
+        assert (mode is None) or (mode in self.all_modes)
         self.mode = mode
 
     def is_applicable(self, obj, ctx):
@@ -46,7 +40,7 @@ class DecisionTreeConverter(Converter):
         tm = pmml.TreeModel(functionName=self.mode, splitCharacteristic=self.BINARY_SPLIT)
         tm.append(self.mining_schema(ctx.schema))
         tm.Node = self._transform_node(obj.tree_, 0, ctx.schema)
-        return tm
+        yield tm
 
     def _transform_node(self, tree, index, schema, enter_condition=None):
         assert isinstance(tree, Tree)

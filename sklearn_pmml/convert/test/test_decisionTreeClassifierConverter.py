@@ -28,7 +28,7 @@ class TestDecisionTreeClassifierConverter(TestCase):
         assert self.converter.is_applicable(self.est, self.ctx)
 
     def test_transform(self):
-        tm = self.converter.transform(self.est, self.ctx)
+        tm = list(self.converter.transform(self.est, self.ctx))[0]
         assert tm.MiningSchema is not None, 'Missing mining schema'
         assert len(tm.MiningSchema.MiningField) == 3, 'Wrong number of mining fields'
         assert tm.Node is not None, 'Missing root node'
@@ -58,7 +58,7 @@ class TestDecisionTreeRegressorConverter(TestCase):
         assert self.converter.is_applicable(self.est, self.ctx)
 
     def test_transform(self):
-        tm = self.converter.transform(self.est, self.ctx)
+        tm = list(self.converter.transform(self.est, self.ctx))[0]
         assert tm.MiningSchema is not None, 'Missing mining schema'
         assert len(tm.MiningSchema.MiningField) == 3, 'Wrong number of mining fields'
         assert tm.Node is not None, 'Missing root node'

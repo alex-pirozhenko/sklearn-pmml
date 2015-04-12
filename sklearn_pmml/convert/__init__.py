@@ -7,10 +7,18 @@ __all__ = ['Schema', 'PMMLTransformationContext', 'PMMLBuilder']
 
 estimator_to_converter = {}
 
+
 class Converter(object):
     """
     A base class for the converters.
     """
+    MODE_CLASSIFICATION = 'classification'
+    MODE_REGRESSION = 'regression'
+    all_modes = {
+        MODE_CLASSIFICATION,
+        MODE_REGRESSION
+    }
+
     def transform(self, obj, ctx):
         """
         Serialize object to PMML node
@@ -73,14 +81,15 @@ class PMMLTransformationContext(object):
 
 class PMMLBuilder(object):
     def build(self, obj, ctx):
-        converter = self.find_converter(obj.__class__)
+        converter = find_converter(obj.__class__)
         assert converter is not None, "Can not find converter for {}".format(obj)
         assert converter.is_applicable(obj, ctx)
         p = pmml.PMML(version="4.2")
         p.append(pmml.Header(**ctx.metadata))
         for el in self.data_description(obj, ctx):
             p.append(el)
-        p.append(converter.transform(obj, ctx))
+        for el in converter.transform(obj, ctx):
+            p.append(el)
         return p
 
     def data_description(self, obj, ctx):
@@ -118,7 +127,7 @@ class PMMLBuilder(object):
         ))
         return dd, td
 
-    @staticmethod
-    def find_converter(cls):
-        # TODO: do the search here
-        return estimator_to_converter.get(cls, None)
+
+def find_converter(cls):
+    # TODO: do the search here
+    return estimator_to_converter.get(cls, None)
