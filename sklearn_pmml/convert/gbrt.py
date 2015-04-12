@@ -40,7 +40,7 @@ class GradientBoostingConverter(Converter):
         dtc = DecisionTreeConverter(mode=DecisionTreeConverter.MODE_REGRESSION)
         inner_schema = Schema(ctx.schema.features, RealNumericFeature(name=ctx.schema.output.external_name))
         inner_ctx = PMMLTransformationContext(schema=inner_schema, metadata={})
-        segmentation = pmml.Segmentation(multipleModelMethod="sum")
+        segmentation = pmml.Segmentation(multipleModelMethod="weightedAverage")
 
         init = pmml.Segment(weight=1)
         init.append(pmml.True_())
@@ -60,9 +60,12 @@ class GradientBoostingConverter(Converter):
             dataType='double', feature='transformedValue',
             name=ctx.schema.output.external_name, optype=ctx.schema.output.optype
         )
-        neg = pmml.Apply(function='-')
-        neg.append(pmml.Constant(0.0, dataType='double'))
+        neg = pmml.Apply(function='*')
         neg.append(pmml.FieldRef(field='predictedValue'))
+        neg.append(pmml.Constant(
+            -(1 + obj.n_estimators * obj.learning_rate),
+            dataType='double'
+        ))
         exp = pmml.Apply(function='exp')
         exp.append(neg)
         plus = pmml.Apply(function='+')
