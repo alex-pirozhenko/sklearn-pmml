@@ -29,11 +29,5 @@ class TestGradientBoostingClassifierConverter(TestCase):
         # TODO: add real tests
 
     def test_end_to_end(self):
-        print self.est.predict_proba([
-            [0, 0],
-            [0, 1],
-            [1, 0],
-            [1, 1],
-        ])
-        print PMMLBuilder().build(self.est, self.ctx).toDOM().toprettyxml()
+        PMMLBuilder().build(self.est, self.ctx).toDOM().toprettyxml()
 
