@@ -16,10 +16,12 @@ class LogOddsEstimatorConverter(EstimatorConverter):
 
         assert isinstance(estimator, LogOddsEstimator), 'This converter can only process LogOddsEstimator instances'
 
-    def model(self):
+    def model(self, verification_data=None):
         rm = pmml.RegressionModel(functionName=self.model_function_name, algorithmName=self.REGRESSION_LINEAR)
         rm.append(self.mining_schema())
         rm.append(pmml.RegressionTable(intercept=self.estimator.prior))
+        if verification_data is not None:
+            rm.append(self.model_verification(verification_data))
         return rm
 
 
@@ -35,12 +37,14 @@ class GradientBoostingConverter(EstimatorConverter):
         assert context.schemas[self.SCHEMA_OUTPUT][0].optype == 'continuous', 'PMML version only returns probabilities'
         assert find_converter(estimator.init_) is not None, 'Can not find a converter for {}'.format(estimator.init_)
 
-    def model(self):
+    def model(self, verification_data=None):
         # gradient boosting is always a regression model in PMML terms:
         mining_model = pmml.MiningModel(functionName=self.MODE_REGRESSION)
         mining_model.append(self.mining_schema())
         mining_model.append(self.output_transformation())
         mining_model.append(self.segmentation())
+        if verification_data is not None:
+            mining_model.append(self.model_verification(verification_data))
         return mining_model
 
     def output_transformation(self):

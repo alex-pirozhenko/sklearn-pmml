@@ -35,7 +35,7 @@ class DecisionTreeConverter(EstimatorConverter):
             'Tree outputs {} results while the schema specifies {} output fields'.format(
                 estimator.tree_.value.shape[1], len(self.context.schemas[self.SCHEMA_OUTPUT]))
 
-    def model(self):
+    def model(self, verification_data=None):
         assert self.SCHEMA_NUMERIC in self.context.schemas, \
             'Either build transformation dictionary or provide {} schema in context'.format(self.SCHEMA_NUMERIC)
         tm = pmml.TreeModel(functionName=self.model_function_name, splitCharacteristic=self.SPLIT_BINARY)
@@ -46,6 +46,8 @@ class DecisionTreeConverter(EstimatorConverter):
             self.context.schemas[self.SCHEMA_NUMERIC],
             self.context.schemas[self.SCHEMA_OUTPUT][0]
         )
+        if verification_data is not None:
+            tm.append(self.model_verification(verification_data))
         return tm
 
     def _transform_node(self, tree, index, input_schema, output_feature, enter_condition=None):

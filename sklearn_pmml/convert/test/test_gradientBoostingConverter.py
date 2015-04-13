@@ -11,7 +11,7 @@ from sklearn_pmml.convert.gbrt import GradientBoostingConverter
 class TestGradientBoostingClassifierConverter(TestCase):
     def setUp(self):
         np.random.seed(1)
-        self.est = GradientBoostingClassifier(max_depth=2, n_estimators=1)
+        self.est = GradientBoostingClassifier(max_depth=2, n_estimators=10)
         self.est.fit([
             [0, 0],
             [0, 1],
@@ -33,4 +33,17 @@ class TestGradientBoostingClassifierConverter(TestCase):
         assert mm.MiningSchema is not None, 'Missing mining schema'
         assert len(mm.MiningSchema.MiningField) == 3, 'Wrong number of mining fields'
         assert mm.Segmentation is not None, 'Missing segmentation root'
+
+    def test_transform_with_verification(self):
+        p = self.converter.pmml([
+            {'x1': 0, 'x2': 'zero', 'output': self.est.predict_proba([[0, 0]])[0, 1]},
+            {'x1': 0, 'x2': 'one', 'output': self.est.predict_proba([[0, 1]])[0, 1]},
+            {'x1': 1, 'x2': 'zero', 'output': self.est.predict_proba([[1, 0]])[0, 1]},
+            {'x1': 1, 'x2': 'one', 'output': self.est.predict_proba([[1, 1]])[0, 1]},
+        ])
+        mm = p.MiningModel[0]
+        assert mm.MiningSchema is not None, 'Missing mining schema'
+        assert len(mm.MiningSchema.MiningField) == 3, 'Wrong number of mining fields'
+        assert mm.Segmentation is not None, 'Missing segmentation root'
+        print p.toDOM().toprettyxml()
 

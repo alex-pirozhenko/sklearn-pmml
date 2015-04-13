@@ -35,6 +35,8 @@ class EstimatorConverter(object):
     SCHEMA_NUMERIC = 'numeric'
     SCHEMA_OUTPUT = 'output'
 
+    EPSILON = 0.00001
+
     def __init__(self, estimator, context, mode):
         self.model_function_name = mode
         self.estimator = estimator
@@ -91,11 +93,47 @@ class EstimatorConverter(object):
         assert len(encoded_schema) == len(self.context.schemas[self.SCHEMA_INPUT])
         return td
 
-    def model(self):
+    def model(self, verification_data=None):
         """
         Build a mining model and return one of the MODEL-ELEMENTs
         """
         pass
+
+    def model_verification(self, verification_data):
+        """
+        Build a model verification dataset
+        :param verification_data: list of dictionaries
+        :return: ModelVerification element
+        """
+        fields = self.context.schemas[self.SCHEMA_INPUT] + self.context.schemas[self.SCHEMA_OUTPUT]
+        assert len(verification_data) > 0, 'Verification data can not be empty'
+        assert len(verification_data[0]) == len(fields), \
+            'Number of fields in validation data should match to input and output schema fields'
+        mv = pmml.ModelVerification(recordCount=len(verification_data), fieldCount=len(verification_data[0]))
+
+        # step one: build verification schema
+        verification_fields = pmml.VerificationFields()
+        for f in fields:
+            if isinstance(f, NumericFeature):
+                vf = pmml.VerificationField(field=f.name, column=f.name, precision=self.EPSILON)
+            else:
+                vf = pmml.VerificationField(field=f.name, column=f.name)
+            verification_fields.append(vf)
+        mv.append(verification_fields)
+
+        # step two: build data table
+        it = pmml.InlineTable()
+        for data in verification_data:
+            row = pmml.row()
+            for f in fields:
+                col = bds().createChildElement(f.name)
+                bds().appendTextChild(data[f.name], col)
+                row.append(col)
+            it.append(row)
+        mv.append(it)
+
+        return mv
+
 
     def mining_schema(self):
         """
@@ -119,7 +157,7 @@ class EstimatorConverter(object):
         """
         return pmml.Header()
 
-    def pmml(self):
+    def pmml(self, verification_data=None):
         """
         Build PMML from the context and estimator.
         Returns PMML element
@@ -128,7 +166,7 @@ class EstimatorConverter(object):
         p.append(self.header())
         p.append(self.data_dictionary())
         p.append(self.transformation_dictionary())
-        p.append(self.model())
+        p.append(self.model(verification_data))
         return p
 
 
