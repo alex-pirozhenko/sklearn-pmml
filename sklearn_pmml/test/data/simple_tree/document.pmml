@@ -1,0 +1,310 @@
+<?xml version="1.0" ?>
+<ns1:PMML version="4.2" xmlns:ns1="http://www.dmg.org/PMML-4_2">
+    <ns1:Header/>
+    <ns1:DataDictionary>
+        <ns1:DataField dataType="integer" name="x1" optype="continuous"/>
+        <ns1:DataField dataType="string" name="x2" optype="categorical">
+            <ns1:Value value="zero"/>
+            <ns1:Value value="one"/>
+        </ns1:DataField>
+        <ns1:DataField dataType="double" name="output" optype="continuous"/>
+    </ns1:DataDictionary>
+    <ns1:TransformationDictionary>
+        <ns1:DerivedField dataType="double" name="numeric::x2" optype="continuous">
+            <ns1:MapValues dataType="double" outputColumn="output">
+                <ns1:FieldColumnPair column="input" field="x2"/>
+                <ns1:InlineTable>
+                    <ns1:row><input>zero</input><output>0</output></ns1:row>
+                    <ns1:row><input>one</input><output>1</output></ns1:row>
+                </ns1:InlineTable>
+            </ns1:MapValues>
+        </ns1:DerivedField>
+    </ns1:TransformationDictionary>
+    <ns1:MiningModel functionName="regression">
+        <ns1:MiningSchema>
+            <ns1:MiningField invalidValueTreatment="asIs" name="x1"/>
+            <ns1:MiningField invalidValueTreatment="asIs" name="x2"/>
+            <ns1:MiningField name="output" usageType="predicted"/>
+        </ns1:MiningSchema>
+        <ns1:Output>
+            <ns1:OutputField feature="predictedValue" name="predictedValue"/>
+            <ns1:OutputField dataType="double" feature="transformedValue" name="output" optype="continuous">
+                <ns1:Apply function="/">
+                    <ns1:Constant dataType="double">1.0</ns1:Constant>
+                    <ns1:Apply function="+">
+                        <ns1:Constant dataType="double">1.0</ns1:Constant>
+                        <ns1:Apply function="exp">
+                            <ns1:Apply function="*">
+                                <ns1:Constant dataType="double">-2.0</ns1:Constant>
+                                <ns1:FieldRef field="predictedValue"/>
+                            </ns1:Apply>
+                        </ns1:Apply>
+                    </ns1:Apply>
+                </ns1:Apply>
+            </ns1:OutputField>
+        </ns1:Output>
+        <ns1:Segmentation multipleModelMethod="weightedAverage">
+            <ns1:Segment weight="1.0">
+                <ns1:True/>
+                <ns1:RegressionModel algorithmName="linearRegression" functionName="regression">
+                    <ns1:MiningSchema>
+                        <ns1:MiningField invalidValueTreatment="asIs" name="x1"/>
+                        <ns1:MiningField invalidValueTreatment="asIs" name="x2"/>
+                        <ns1:MiningField name="output" usageType="predicted"/>
+                    </ns1:MiningSchema>
+                    <ns1:RegressionTable intercept="1.09861228867"/>
+                </ns1:RegressionModel>
+            </ns1:Segment>
+            <ns1:Segment weight="0.1">
+                <ns1:True/>
+                <ns1:TreeModel functionName="regression" splitCharacteristic="binarySplit">
+                    <ns1:MiningSchema>
+                        <ns1:MiningField invalidValueTreatment="asIs" name="x1"/>
+                        <ns1:MiningField invalidValueTreatment="asIs" name="x2"/>
+                        <ns1:MiningField name="output" usageType="predicted"/>
+                    </ns1:MiningSchema>
+                    <ns1:Node recordCount="4.0">
+                        <ns1:True/>
+                        <ns1:Node recordCount="2.0">
+                            <ns1:SimplePredicate field="numeric::x2" operator="lessOrEqual" value="0.5"/>
+                            <ns1:Node recordCount="1.0" score="-4.0">
+                                <ns1:SimplePredicate field="x1" operator="lessOrEqual" value="0.5"/>
+                            </ns1:Node>
+                            <ns1:Node recordCount="1.0" score="1.33333333333">
+                                <ns1:True/>
+                            </ns1:Node>
+                        </ns1:Node>
+                        <ns1:Node recordCount="2.0" score="1.33333333333">
+                            <ns1:True/>
+                        </ns1:Node>
+                    </ns1:Node>
+                </ns1:TreeModel>
+            </ns1:Segment>
+            <ns1:Segment weight="0.1">
+                <ns1:True/>
+                <ns1:TreeModel functionName="regression" splitCharacteristic="binarySplit">
+                    <ns1:MiningSchema>
+                        <ns1:MiningField invalidValueTreatment="asIs" name="x1"/>
+                        <ns1:MiningField invalidValueTreatment="asIs" name="x2"/>
+                        <ns1:MiningField name="output" usageType="predicted"/>
+                    </ns1:MiningSchema>
+                    <ns1:Node recordCount="4.0">
+                        <ns1:True/>
+                        <ns1:Node recordCount="2.0">
+                            <ns1:SimplePredicate field="x1" operator="lessOrEqual" value="0.5"/>
+                            <ns1:Node recordCount="1.0" score="-3.01096013811">
+                                <ns1:SimplePredicate field="numeric::x2" operator="lessOrEqual" value="0.5"/>
+                            </ns1:Node>
+                            <ns1:Node recordCount="1.0" score="1.29172443968">
+                                <ns1:True/>
+                            </ns1:Node>
+                        </ns1:Node>
+                        <ns1:Node recordCount="2.0" score="1.29172443968">
+                            <ns1:True/>
+                        </ns1:Node>
+                    </ns1:Node>
+                </ns1:TreeModel>
+            </ns1:Segment>
+            <ns1:Segment weight="0.1">
+                <ns1:True/>
+                <ns1:TreeModel functionName="regression" splitCharacteristic="binarySplit">
+                    <ns1:MiningSchema>
+                        <ns1:MiningField invalidValueTreatment="asIs" name="x1"/>
+                        <ns1:MiningField invalidValueTreatment="asIs" name="x2"/>
+                        <ns1:MiningField name="output" usageType="predicted"/>
+                    </ns1:MiningSchema>
+                    <ns1:Node recordCount="4.0">
+                        <ns1:True/>
+                        <ns1:Node recordCount="2.0">
+                            <ns1:SimplePredicate field="numeric::x2" operator="lessOrEqual" value="0.5"/>
+                            <ns1:Node recordCount="1.0" score="-2.48812401278">
+                                <ns1:SimplePredicate field="x1" operator="lessOrEqual" value="0.5"/>
+                            </ns1:Node>
+                            <ns1:Node recordCount="1.0" score="1.25637397364">
+                                <ns1:True/>
+                            </ns1:Node>
+                        </ns1:Node>
+                        <ns1:Node recordCount="2.0" score="1.25637397364">
+                            <ns1:True/>
+                        </ns1:Node>
+                    </ns1:Node>
+                </ns1:TreeModel>
+            </ns1:Segment>
+            <ns1:Segment weight="0.1">
+                <ns1:True/>
+                <ns1:TreeModel functionName="regression" splitCharacteristic="binarySplit">
+                    <ns1:MiningSchema>
+                        <ns1:MiningField invalidValueTreatment="asIs" name="x1"/>
+                        <ns1:MiningField invalidValueTreatment="asIs" name="x2"/>
+                        <ns1:MiningField name="output" usageType="predicted"/>
+                    </ns1:MiningSchema>
+                    <ns1:Node recordCount="4.0">
+                        <ns1:True/>
+                        <ns1:Node recordCount="2.0">
+                            <ns1:SimplePredicate field="x1" operator="lessOrEqual" value="0.5"/>
+                            <ns1:Node recordCount="1.0" score="-2.16032933416">
+                                <ns1:SimplePredicate field="numeric::x2" operator="lessOrEqual" value="0.5"/>
+                            </ns1:Node>
+                            <ns1:Node recordCount="1.0" score="1.22610507292">
+                                <ns1:True/>
+                            </ns1:Node>
+                        </ns1:Node>
+                        <ns1:Node recordCount="2.0" score="1.22610507292">
+                            <ns1:True/>
+                        </ns1:Node>
+                    </ns1:Node>
+                </ns1:TreeModel>
+            </ns1:Segment>
+            <ns1:Segment weight="0.1">
+                <ns1:True/>
+                <ns1:TreeModel functionName="regression" splitCharacteristic="binarySplit">
+                    <ns1:MiningSchema>
+                        <ns1:MiningField invalidValueTreatment="asIs" name="x1"/>
+                        <ns1:MiningField invalidValueTreatment="asIs" name="x2"/>
+                        <ns1:MiningField name="output" usageType="predicted"/>
+                    </ns1:MiningSchema>
+                    <ns1:Node recordCount="4.0">
+                        <ns1:True/>
+                        <ns1:Node recordCount="2.0">
+                            <ns1:SimplePredicate field="numeric::x2" operator="lessOrEqual" value="0.5"/>
+                            <ns1:Node recordCount="1.0" score="-1.93488751678">
+                                <ns1:SimplePredicate field="x1" operator="lessOrEqual" value="0.5"/>
+                            </ns1:Node>
+                            <ns1:Node recordCount="1.0" score="1.20001438888">
+                                <ns1:True/>
+                            </ns1:Node>
+                        </ns1:Node>
+                        <ns1:Node recordCount="2.0" score="1.20001438888">
+                            <ns1:True/>
+                        </ns1:Node>
+                    </ns1:Node>
+                </ns1:TreeModel>
+            </ns1:Segment>
+            <ns1:Segment weight="0.1">
+                <ns1:True/>
+                <ns1:TreeModel functionName="regression" splitCharacteristic="binarySplit">
+                    <ns1:MiningSchema>
+                        <ns1:MiningField invalidValueTreatment="asIs" name="x1"/>
+                        <ns1:MiningField invalidValueTreatment="asIs" name="x2"/>
+                        <ns1:MiningField name="output" usageType="predicted"/>
+                    </ns1:MiningSchema>
+                    <ns1:Node recordCount="4.0">
+                        <ns1:True/>
+                        <ns1:Node recordCount="2.0">
+                            <ns1:SimplePredicate field="numeric::x2" operator="lessOrEqual" value="0.5"/>
+                            <ns1:Node recordCount="1.0" score="-1.77042126871">
+                                <ns1:SimplePredicate field="x1" operator="lessOrEqual" value="0.5"/>
+                            </ns1:Node>
+                            <ns1:Node recordCount="1.0" score="1.17739659388">
+                                <ns1:True/>
+                            </ns1:Node>
+                        </ns1:Node>
+                        <ns1:Node recordCount="2.0" score="1.17739659388">
+                            <ns1:True/>
+                        </ns1:Node>
+                    </ns1:Node>
+                </ns1:TreeModel>
+            </ns1:Segment>
+            <ns1:Segment weight="0.1">
+                <ns1:True/>
+                <ns1:TreeModel functionName="regression" splitCharacteristic="binarySplit">
+                    <ns1:MiningSchema>
+                        <ns1:MiningField invalidValueTreatment="asIs" name="x1"/>
+                        <ns1:MiningField invalidValueTreatment="asIs" name="x2"/>
+                        <ns1:MiningField name="output" usageType="predicted"/>
+                    </ns1:MiningSchema>
+                    <ns1:Node recordCount="4.0">
+                        <ns1:True/>
+                        <ns1:Node recordCount="2.0">
+                            <ns1:SimplePredicate field="numeric::x2" operator="lessOrEqual" value="0.5"/>
+                            <ns1:Node recordCount="1.0" score="-1.64541617456">
+                                <ns1:SimplePredicate field="x1" operator="lessOrEqual" value="0.5"/>
+                            </ns1:Node>
+                            <ns1:Node recordCount="1.0" score="1.1576927012">
+                                <ns1:True/>
+                            </ns1:Node>
+                        </ns1:Node>
+                        <ns1:Node recordCount="2.0" score="1.1576927012">
+                            <ns1:True/>
+                        </ns1:Node>
+                    </ns1:Node>
+                </ns1:TreeModel>
+            </ns1:Segment>
+            <ns1:Segment weight="0.1">
+                <ns1:True/>
+                <ns1:TreeModel functionName="regression" splitCharacteristic="binarySplit">
+                    <ns1:MiningSchema>
+                        <ns1:MiningField invalidValueTreatment="asIs" name="x1"/>
+                        <ns1:MiningField invalidValueTreatment="asIs" name="x2"/>
+                        <ns1:MiningField name="output" usageType="predicted"/>
+                    </ns1:MiningSchema>
+                    <ns1:Node recordCount="4.0">
+                        <ns1:True/>
+                        <ns1:Node recordCount="2.0">
+                            <ns1:SimplePredicate field="numeric::x2" operator="lessOrEqual" value="0.5"/>
+                            <ns1:Node recordCount="1.0" score="-1.54749521566">
+                                <ns1:SimplePredicate field="x1" operator="lessOrEqual" value="0.5"/>
+                            </ns1:Node>
+                            <ns1:Node recordCount="1.0" score="1.14045384647">
+                                <ns1:True/>
+                            </ns1:Node>
+                        </ns1:Node>
+                        <ns1:Node recordCount="2.0" score="1.14045384647">
+                            <ns1:True/>
+                        </ns1:Node>
+                    </ns1:Node>
+                </ns1:TreeModel>
+            </ns1:Segment>
+            <ns1:Segment weight="0.1">
+                <ns1:True/>
+                <ns1:TreeModel functionName="regression" splitCharacteristic="binarySplit">
+                    <ns1:MiningSchema>
+                        <ns1:MiningField invalidValueTreatment="asIs" name="x1"/>
+                        <ns1:MiningField invalidValueTreatment="asIs" name="x2"/>
+                        <ns1:MiningField name="output" usageType="predicted"/>
+                    </ns1:MiningSchema>
+                    <ns1:Node recordCount="4.0">
+                        <ns1:True/>
+                        <ns1:Node recordCount="2.0">
+                            <ns1:SimplePredicate field="numeric::x2" operator="lessOrEqual" value="0.5"/>
+                            <ns1:Node recordCount="1.0" score="-1.46900067214">
+                                <ns1:SimplePredicate field="x1" operator="lessOrEqual" value="0.5"/>
+                            </ns1:Node>
+                            <ns1:Node recordCount="1.0" score="1.12531537443">
+                                <ns1:True/>
+                            </ns1:Node>
+                        </ns1:Node>
+                        <ns1:Node recordCount="2.0" score="1.12531537443">
+                            <ns1:True/>
+                        </ns1:Node>
+                    </ns1:Node>
+                </ns1:TreeModel>
+            </ns1:Segment>
+            <ns1:Segment weight="0.1">
+                <ns1:True/>
+                <ns1:TreeModel functionName="regression" splitCharacteristic="binarySplit">
+                    <ns1:MiningSchema>
+                        <ns1:MiningField invalidValueTreatment="asIs" name="x1"/>
+                        <ns1:MiningField invalidValueTreatment="asIs" name="x2"/>
+                        <ns1:MiningField name="output" usageType="predicted"/>
+                    </ns1:MiningSchema>
+                    <ns1:Node recordCount="4.0">
+                        <ns1:True/>
+                        <ns1:Node recordCount="2.0">
+                            <ns1:SimplePredicate field="x1" operator="lessOrEqual" value="0.5"/>
+                            <ns1:Node recordCount="1.0" score="-1.40492591901">
+                                <ns1:SimplePredicate field="numeric::x2" operator="lessOrEqual" value="0.5"/>
+                            </ns1:Node>
+                            <ns1:Node recordCount="1.0" score="1.11197795459">
+                                <ns1:True/>
+                            </ns1:Node>
+                        </ns1:Node>
+                        <ns1:Node recordCount="2.0" score="1.11197795459">
+                            <ns1:True/>
+                        </ns1:Node>
+                    </ns1:Node>
+                </ns1:TreeModel>
+            </ns1:Segment>
+        </ns1:Segmentation>
+    </ns1:MiningModel>
+</ns1:PMML>

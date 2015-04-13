@@ -5,10 +5,10 @@ from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
 from sklearn.tree._tree import Tree, TREE_LEAF
 import numpy as np
 
-from sklearn_pmml.convert import EstimatorConverter
+from sklearn_pmml.convert.model import EstimatorConverter
 from sklearn_pmml.convert.features import Feature, CategoricalFeature, NumericFeature
 import sklearn_pmml.pmml as pmml
-from sklearn_pmml.convert import estimator_to_converter
+from sklearn_pmml.convert.utils import estimator_to_converter
 
 
 class DecisionTreeConverter(EstimatorConverter):

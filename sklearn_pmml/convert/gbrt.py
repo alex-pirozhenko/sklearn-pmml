@@ -2,10 +2,10 @@ from sklearn.ensemble import GradientBoostingClassifier
 
 from sklearn.ensemble.gradient_boosting import LogOddsEstimator
 
-from sklearn_pmml.convert import find_converter, EstimatorConverter
+from sklearn_pmml.convert.model import EstimatorConverter
 from sklearn_pmml.convert.tree import DecisionTreeConverter
 import sklearn_pmml.pmml as pmml
-from sklearn_pmml.convert import estimator_to_converter
+from sklearn_pmml.convert.utils import estimator_to_converter, find_converter
 
 
 class LogOddsEstimatorConverter(EstimatorConverter):
