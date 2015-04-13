@@ -45,5 +45,4 @@ class TestGradientBoostingClassifierConverter(TestCase):
         assert mm.MiningSchema is not None, 'Missing mining schema'
         assert len(mm.MiningSchema.MiningField) == 3, 'Wrong number of mining fields'
         assert mm.Segmentation is not None, 'Missing segmentation root'
-        print p.toDOM().toprettyxml()
 
