@@ -1,5 +1,7 @@
 import os
+
 from setuptools import setup, Command
+
 
 with open(os.path.join(os.path.dirname(__file__), 'requirements.txt')) as f:
     required = f.read().splitlines()

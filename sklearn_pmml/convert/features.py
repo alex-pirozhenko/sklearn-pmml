@@ -1,17 +1,21 @@
 class Feature(object):
     INVALID_TREATMENT_AS_IS = 'asIs'
 
-    def __init__(self, name, invalid_value_treatment=INVALID_TREATMENT_AS_IS):
+    def __init__(self, name, namespace='', invalid_value_treatment=INVALID_TREATMENT_AS_IS):
         self._name = name
+        self._namespace = namespace
         self._invalid_value_treatment = invalid_value_treatment
 
     @property
-    def external_name(self):
+    def name(self):
         return self._name
 
     @property
-    def internal_name(self):
-        return self._name
+    def full_name(self):
+        if self._namespace:
+            return '{}::{}'.format(self._namespace, self.name)
+        else:
+            return self.name
 
     @property
     def invalid_value_treatment(self):
@@ -66,10 +70,6 @@ class CategoricalFeature(Feature):
         assert value >= 0, 'Negative numbers can not be used as categorical indexes'
         assert value < len(self.value_list), 'Unknown category index {}'.format(value)
         return self.value_list[value]
-
-    @property
-    def internal_name(self):
-        return "{}_encoded".format(self.external_name)
 
 
 class IntegerCategoricalFeature(CategoricalFeature):

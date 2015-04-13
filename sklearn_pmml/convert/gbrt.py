@@ -1,69 +1,67 @@
-import functools
-from sklearn.base import ClassifierMixin, RegressorMixin
 from sklearn.ensemble import GradientBoostingClassifier
+
 from sklearn.ensemble.gradient_boosting import LogOddsEstimator
-from sklearn.tree._tree import Tree, TREE_LEAF
-from sklearn_pmml.convert import Converter, PMMLTransformationContext, Schema, find_converter
-from sklearn_pmml.convert.features import *
+
+from sklearn_pmml.convert import find_converter, EstimatorConverter
 from sklearn_pmml.convert.tree import DecisionTreeConverter
 import sklearn_pmml.pmml as pmml
-import numpy as np
 from sklearn_pmml.convert import estimator_to_converter
 
 
-class LogOddsEstimatorConverter(Converter):
+class LogOddsEstimatorConverter(EstimatorConverter):
+    REGRESSION_LINEAR = "linearRegression"
 
-    def is_applicable(self, obj, ctx):
-        return True
+    def __init__(self, estimator, context):
+        super(LogOddsEstimatorConverter, self).__init__(estimator, context, self.MODE_REGRESSION)
 
-    def transform(self, obj, ctx):
-        super(LogOddsEstimatorConverter, self).transform(obj, ctx)
-        assert isinstance(obj, LogOddsEstimator)
-        rm = pmml.RegressionModel(functionName="regression", algorithmName="linearRegression")
-        rm.append(self.mining_schema(ctx.schema))
-        rm.append(pmml.RegressionTable(intercept=obj.prior))
-        yield rm
+        assert isinstance(estimator, LogOddsEstimator), 'This converter can only process LogOddsEstimator instances'
+
+    def model(self):
+        rm = pmml.RegressionModel(functionName=self.model_function_name, algorithmName=self.REGRESSION_LINEAR)
+        rm.append(self.mining_schema())
+        rm.append(pmml.RegressionTable(intercept=self.estimator.prior))
+        return rm
 
 
-class GradientBoostingConverter(Converter):
+class GradientBoostingConverter(EstimatorConverter):
+    def __init__(self, estimator, context):
+        super(GradientBoostingConverter, self).__init__(estimator, context, self.MODE_CLASSIFICATION)
 
-    def __init__(self, mode):
-        super(GradientBoostingConverter, self).__init__()
-        self.mode = mode
+        assert isinstance(estimator, GradientBoostingClassifier), \
+            'This converter can only process GradientBoostingClassifier instances'
+        assert len(context.schemas[self.SCHEMA_OUTPUT]) == 1, 'Only one-label classification is supported'
+        assert not estimator.loss_.is_multi_class, 'Only one-label classification is supported'
+        assert context.schemas[self.SCHEMA_OUTPUT][0].data_type == 'double', 'PMML version only returns probabilities'
+        assert context.schemas[self.SCHEMA_OUTPUT][0].optype == 'continuous', 'PMML version only returns probabilities'
+        assert find_converter(estimator.init_) is not None, 'Can not find a converter for {}'.format(estimator.init_)
 
-    def is_applicable(self, obj, ctx):
-        return True
+    def model(self):
+        # gradient boosting is always a regression model in PMML terms:
+        mining_model = pmml.MiningModel(functionName=self.MODE_REGRESSION)
+        mining_model.append(self.mining_schema())
+        mining_model.append(self.output_transformation())
+        mining_model.append(self.segmentation())
+        return mining_model
 
-    def transform(self, obj, ctx):
-        super(GradientBoostingConverter, self).transform(obj, ctx)
-        assert isinstance(obj, GradientBoostingClassifier)
-        dtc = DecisionTreeConverter(mode=DecisionTreeConverter.MODE_REGRESSION)
-        inner_schema = Schema(ctx.schema.features, RealNumericFeature(name=ctx.schema.output.external_name))
-        inner_ctx = PMMLTransformationContext(schema=inner_schema, metadata={})
-        segmentation = pmml.Segmentation(multipleModelMethod="weightedAverage")
-
-        init = pmml.Segment(weight=1)
-        init.append(pmml.True_())
-        for el in find_converter(obj.init_.__class__).transform(obj.init_, ctx):
-            init.append(el)
-        segmentation.append(init)
-
-        for tm in map(functools.partial(dtc.transform, ctx=inner_ctx), obj.estimators_[:, 0]) :
-            s = pmml.Segment(weight=obj.learning_rate)
-            s.append(pmml.True_())
-            for el in tm:
-                s.append(el)
-            segmentation.append(s)
+    def output_transformation(self):
+        """
+        Build sigmoid output transformation:
+        proba = 1 / (1 + exp(-(initial_estimate + weighted_sum(estimates))))
+        :return: Output element
+        """
         output = pmml.Output()
         output.append(pmml.OutputField(feature='predictedValue', name='predictedValue'))
+        output_feature = self.context.schemas[self.SCHEMA_OUTPUT][0]
         output_field = pmml.OutputField(
             dataType='double', feature='transformedValue',
-            name=ctx.schema.output.external_name, optype=ctx.schema.output.optype
+            name=output_feature.full_name, optype=output_feature.optype
         )
         neg = pmml.Apply(function='*')
         neg.append(pmml.FieldRef(field='predictedValue'))
         neg.append(pmml.Constant(
-            -(1 + obj.n_estimators * obj.learning_rate),
+            # there is no notion of weighted sum in segment aggregation, so we used weighted average,
+            # and now the result should be multiplied by total weight
+            -(1 + self.estimator.n_estimators * self.estimator.learning_rate),
             dataType='double'
         ))
         exp = pmml.Apply(function='exp')
@@ -77,13 +75,31 @@ class GradientBoostingConverter(Converter):
 
         output_field.append(div)
         output.append(output_field)
+        return output
 
-        mm = pmml.MiningModel(functionName=self.MODE_REGRESSION)
-        mm.append(self.mining_schema(ctx.schema))
-        mm.append(output)
-        mm.append(segmentation)
-        yield mm
+    def segmentation(self):
+        """
+        Build a segmentation (sequence of estimators)
+        :return: Segmentation element
+        """
+        # there is no notion of weighted sum, so we should take weighted average and multiply result by total weight
+        # in output transformation
+        segmentation = pmml.Segmentation(multipleModelMethod="weightedAverage")
+
+        # first, transform initial estimator
+        init_segment = pmml.Segment(weight=1)
+        init_segment.append(pmml.True_())
+        init_segment.append(find_converter(self.estimator.init_)(self.estimator.init_, self.context).model())
+        segmentation.append(init_segment)
+
+        for est in self.estimator.estimators_[:, 0]:
+            s = pmml.Segment(weight=self.estimator.learning_rate)
+            s.append(pmml.True_())
+            s.append(DecisionTreeConverter(est, self.context, self.MODE_REGRESSION).model())
+            segmentation.append(s)
+
+        return segmentation
 
 
-estimator_to_converter[GradientBoostingClassifier] = GradientBoostingConverter(mode=GradientBoostingConverter.MODE_CLASSIFICATION)
-estimator_to_converter[LogOddsEstimator] = LogOddsEstimatorConverter()
+estimator_to_converter[GradientBoostingClassifier] = GradientBoostingConverter
+estimator_to_converter[LogOddsEstimator] = LogOddsEstimatorConverter

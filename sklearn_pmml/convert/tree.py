@@ -1,56 +1,61 @@
+from functools import partial
+
 from sklearn.base import ClassifierMixin, RegressorMixin
 from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
 from sklearn.tree._tree import Tree, TREE_LEAF
-from sklearn_pmml.convert import Converter, PMMLTransformationContext, Schema
+import numpy as np
+
+from sklearn_pmml.convert import EstimatorConverter
 from sklearn_pmml.convert.features import Feature, CategoricalFeature, NumericFeature
 import sklearn_pmml.pmml as pmml
-import numpy as np
 from sklearn_pmml.convert import estimator_to_converter
 
 
-class DecisionTreeConverter(Converter):
-
-    BINARY_SPLIT = 'binarySplit'
-
+class DecisionTreeConverter(EstimatorConverter):
+    SPLIT_BINARY = 'binarySplit'
     OPERATOR_LE = 'lessOrEqual'
+    NODE_ROOT = 0
 
-    def __init__(self, mode):
-        assert (mode is None) or (mode in self.all_modes)
-        self.mode = mode
+    def __init__(self, estimator, context, mode):
+        super(DecisionTreeConverter, self).__init__(estimator, context, mode)
 
-    def is_applicable(self, obj, ctx):
-        if not hasattr(obj, 'tree_'):
-            return False
-        if self.mode == self.MODE_CLASSIFICATION:
-            if not isinstance(ctx.schema.output, CategoricalFeature):
-                return False
-            if not isinstance(obj, ClassifierMixin):
-                return False
-        if self.mode == self.MODE_REGRESSION:
-            if not isinstance(ctx.schema.output, NumericFeature):
-                return False
-            if not isinstance(obj, RegressorMixin):
-                return False
+        assert len(self.context.schemas[self.SCHEMA_OUTPUT]) == 1, 'Only one-label trees are supported'
+        assert hasattr(estimator, 'tree_'), 'Estimator has no tree_ attribute'
+        if mode == self.MODE_CLASSIFICATION:
+            assert isinstance(self.context.schemas[self.SCHEMA_OUTPUT][0], CategoricalFeature), \
+                'Only a categorical feature can be an output of classification'
+            assert isinstance(self.estimator, ClassifierMixin), \
+                'Only a classifier can be serialized in classification mode'
+        if mode == self.MODE_REGRESSION:
+            assert isinstance(self.context.schemas[self.SCHEMA_OUTPUT][0], NumericFeature), \
+                'Only a numeric feature can be an output of regression'
+            assert isinstance(self.estimator, RegressorMixin), \
+                'Only a regressor can be serialized in regression mode'
+        assert estimator.tree_.value.shape[1] == len(self.context.schemas[self.SCHEMA_OUTPUT]), \
+            'Tree outputs {} results while the schema specifies {} output fields'.format(
+                estimator.tree_.value.shape[1], len(self.context.schemas[self.SCHEMA_OUTPUT]))
 
-        return True
+    def model(self):
+        assert self.SCHEMA_NUMERIC in self.context.schemas, \
+            'Either build transformation dictionary or provide {} schema in context'.format(self.SCHEMA_NUMERIC)
+        tm = pmml.TreeModel(functionName=self.model_function_name, splitCharacteristic=self.SPLIT_BINARY)
+        tm.append(self.mining_schema())
+        tm.Node = self._transform_node(
+            self.estimator.tree_,
+            self.NODE_ROOT,
+            self.context.schemas[self.SCHEMA_NUMERIC],
+            self.context.schemas[self.SCHEMA_OUTPUT][0]
+        )
+        return tm
 
-    def transform(self, obj, ctx):
-        super(DecisionTreeConverter, self).transform(obj, ctx)
-        assert isinstance(ctx, PMMLTransformationContext)
-        tm = pmml.TreeModel(functionName=self.mode, splitCharacteristic=self.BINARY_SPLIT)
-        tm.append(self.mining_schema(ctx.schema))
-        tm.Node = self._transform_node(obj.tree_, 0, ctx.schema)
-        yield tm
-
-    def _transform_node(self, tree, index, schema, enter_condition=None):
+    def _transform_node(self, tree, index, input_schema, output_feature, enter_condition=None):
+        """
+        Recursive mapping of sklearn Tree into PMML Node tree
+        :return: Node element
+        """
         assert isinstance(tree, Tree)
-        assert isinstance(schema, Schema)
-        output_feature = schema.output
-
-        if self.mode == self.MODE_CLASSIFICATION:
-            assert isinstance(output_feature, CategoricalFeature)
-        elif self.mode == self.MODE_REGRESSION:
-            assert isinstance(output_feature, NumericFeature)
+        assert isinstance(input_schema, list)
+        assert isinstance(output_feature, Feature)
 
         node = pmml.Node()
         if enter_condition is None:
@@ -60,19 +65,19 @@ class DecisionTreeConverter(Converter):
         node.recordCount = tree.n_node_samples[index]
 
         if tree.children_left[index] != TREE_LEAF:
-            feature = schema.features[tree.feature[index]]
+            feature = input_schema[tree.feature[index]]
             assert isinstance(feature, Feature)
             left_child = self._transform_node(
-                tree, tree.children_left[index], schema, enter_condition=(pmml.SimplePredicate(
-                    field=feature.internal_name,
-                    operator=DecisionTreeConverter.OPERATOR_LE,
-                    value_=tree.threshold[index]
-                ))
+                tree,
+                tree.children_left[index],
+                input_schema,
+                output_feature,
+                enter_condition=pmml.SimplePredicate(
+                    field=feature.full_name, operator=DecisionTreeConverter.OPERATOR_LE, value_=tree.threshold[index]
+                )
             )
-            right_child = self._transform_node(
-                tree, tree.children_right[index], schema
-            )
-            if self.mode == self.MODE_CLASSIFICATION:
+            right_child = self._transform_node(tree, tree.children_right[index], input_schema, output_feature)
+            if self.model_function_name == self.MODE_CLASSIFICATION:
                 score, score_prob = None, 0.0
                 for i in range(len(tree.value[index][0])):
                     left_score = left_child.ScoreDistribution[i]
@@ -89,10 +94,8 @@ class DecisionTreeConverter(Converter):
             node.append(left_child).append(right_child)
 
         else:
-            assert len(tree.value[index]) == 1, 'Only one-label trees are supported'
             node_value = np.array(tree.value[index][0])
-            if self.mode == self.MODE_CLASSIFICATION:
-                assert node.recordCount == node_value.sum()
+            if self.model_function_name == self.MODE_CLASSIFICATION:
                 probs = node_value / float(node_value.sum())
                 for i in range(len(probs)):
                     node.append(pmml.ScoreDistribution(
@@ -101,11 +104,15 @@ class DecisionTreeConverter(Converter):
                         value_=output_feature.from_number(i)
                     ))
                 node.score = output_feature.from_number(probs.argmax())
-            elif self.mode == self.MODE_REGRESSION:
+            elif self.model_function_name == self.MODE_REGRESSION:
                 node.score = node_value[0]
 
         return node
 
 
-estimator_to_converter[DecisionTreeClassifier] = DecisionTreeConverter(mode=DecisionTreeConverter.MODE_CLASSIFICATION)
-estimator_to_converter[DecisionTreeRegressor] = DecisionTreeConverter(mode=DecisionTreeConverter.MODE_REGRESSION)
+estimator_to_converter[DecisionTreeClassifier] = partial(
+    DecisionTreeConverter, mode=DecisionTreeConverter.MODE_CLASSIFICATION
+)
+estimator_to_converter[DecisionTreeRegressor] = partial(
+    DecisionTreeConverter, mode=DecisionTreeConverter.MODE_REGRESSION
+)

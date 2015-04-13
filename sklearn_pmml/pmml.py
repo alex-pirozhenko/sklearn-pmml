@@ -5,14 +5,15 @@
 # Namespace http://www.dmg.org/PMML-4_2
 
 from __future__ import unicode_literals
+import io
+
 import pyxb
 import pyxb.binding
 import pyxb.binding.saxer
-import io
 import pyxb.utils.utility
 import pyxb.utils.domutils
-import sys
 import pyxb.utils.six as _six
+
 
 # Unique identifier for bindings created at the same time
 _GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:4d641c54-de23-11e4-83d3-c8e0eb19168d')
