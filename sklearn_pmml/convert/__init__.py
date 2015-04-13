@@ -49,11 +49,11 @@ class EstimatorConverter(object):
         Build a data dictionary and return a DataDictionary element
         """
         dd = pmml.DataDictionary()
-        for f in self.context.schemas[self.SCHEMA_INPUT] + self.context.schemas[self.SCHEMA_INPUT]:
+        for f in self.context.schemas[self.SCHEMA_INPUT] + self.context.schemas[self.SCHEMA_OUTPUT]:
             data_field = pmml.DataField(dataType=f.data_type, name=f.name, optype=f.optype)
             dd.DataField.append(data_field)
             if isinstance(f, CategoricalFeature):
-                for v in enumerate(f.value_list):
+                for v in f.value_list:
                     data_field.append(pmml.Value(value_=v))
         return dd
 
