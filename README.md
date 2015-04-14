@@ -2,3 +2,8 @@
 
 # sklearn-pmml
 A library that allows serialization of SciKit-Learn estimators into PMML
+
+# Supported models
+- DecisionTreeClassifier
+- DecisionTreeRegressor
+- GradientBoostingClassifier
