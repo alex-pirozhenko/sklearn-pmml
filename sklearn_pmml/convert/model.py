@@ -1,4 +1,5 @@
 from sklearn_pmml import pmml
+from sklearn_pmml.convert.utils import pmml_row
 from sklearn_pmml.convert.features import *
 from pyxb.utils.domutils import BindingDOMSupport as bds
 
@@ -44,11 +45,12 @@ class EstimatorConverter(object):
         """
         dd = pmml.DataDictionary()
         for f in self.context.schemas[self.SCHEMA_INPUT] + self.context.schemas[self.SCHEMA_OUTPUT]:
-            data_field = pmml.DataField(dataType=f.data_type, name=f.name, optype=f.optype)
-            dd.DataField.append(data_field)
-            if isinstance(f, CategoricalFeature):
-                for v in f.value_list:
-                    data_field.append(pmml.Value(value_=v))
+            if not isinstance(f, DerivedFeature):
+                data_field = pmml.DataField(dataType=f.data_type, name=f.name, optype=f.optype)
+                dd.DataField.append(data_field)
+                if isinstance(f, CategoricalFeature):
+                    for v in f.value_list:
+                        data_field.append(pmml.Value(value_=v))
         return dd
 
     def transformation_dictionary(self):
@@ -56,12 +58,14 @@ class EstimatorConverter(object):
         Build a transformation dictionary and return a TransformationDictionary element
         """
         td = pmml.TransformationDictionary()
+        # define a schema with all variables available for a model
         encoded_schema = []
         self.context.schemas[self.SCHEMA_NUMERIC] = encoded_schema
 
         for f in self.context.schemas[self.SCHEMA_INPUT]:
             if isinstance(f, CategoricalFeature):
                 ef = RealNumericFeature(name=f.name, namespace=self.SCHEMA_NUMERIC)
+                # create a record in transformation dictionary with mapping from raw values into numbers
                 df = pmml.DerivedField(
                     name=ef.full_name,
                     optype=ef.optype,
@@ -71,15 +75,17 @@ class EstimatorConverter(object):
                 mv.append(pmml.FieldColumnPair(field=f.full_name, column='input'))
                 it = pmml.InlineTable()
                 for i, v in enumerate(f.value_list):
-                    r = pmml.row()
-                    input = bds().createChildElement('input')
-                    bds().appendTextChild(v, input)
-                    output = bds().createChildElement('output')
-                    bds().appendTextChild(i, output)
-                    r.append(input)
-                    r.append(output)
-                    it.append(r)
+                    it.append(pmml_row(input=v, output=i))
                 td.append(df.append(mv.append(it)))
+            elif isinstance(f, DerivedFeature):
+                ef = RealNumericFeature(name=f.name, namespace=self.SCHEMA_NUMERIC)
+                df = pmml.DerivedField(
+                    name=ef.full_name,
+                    optype=ef.optype,
+                    dataType=ef.data_type
+                )
+                df.append(f.transformation)
+                td.append(df)
             else:
                 ef = RealNumericFeature(name=f.name)
 

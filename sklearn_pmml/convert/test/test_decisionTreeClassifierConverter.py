@@ -4,9 +4,10 @@ import numpy as np
 
 from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
 
-from sklearn_pmml.convert import TransformationContext
+from sklearn_pmml.convert import TransformationContext, pmml_row
 from sklearn_pmml.convert.features import *
 from sklearn_pmml.convert.tree import DecisionTreeConverter
+from sklearn_pmml import pmml
 
 
 class TestDecisionTreeClassifierConverter(TestCase):
@@ -37,6 +38,41 @@ class TestDecisionTreeClassifierConverter(TestCase):
         assert tm.Node is not None, 'Missing root node'
         assert tm.Node.recordCount == 4
         assert tm.Node.True_ is not None, 'Root condition should always be True'
+
+    def test_transform_with_derived_field(self):
+        self.est = DecisionTreeClassifier(max_depth=2)
+        self.est.fit([
+            [0, 0, 0],
+            [0, 1, 0],
+            [1, 0, 0],
+            [1, 1, 1],
+        ], [0, 1, 1, 1])
+        mapping = pmml.MapValues(dataType="double", outputColumn="output")
+        mapping.append(pmml.FieldColumnPair(column="x1", field="x1"))
+        mapping.append(pmml.FieldColumnPair(column="x2", field="x2"))
+        it = pmml.InlineTable()
+        it.append(pmml_row(x1=0, x2='zero', output=0))
+        it.append(pmml_row(x1=0, x2='one', output=0))
+        it.append(pmml_row(x1=1, x2='zero', output=0))
+        it.append(pmml_row(x1=1, x2='one', output=1))
+        mapping.append(it)
+        self.ctx = TransformationContext(
+            input=[
+                IntegerNumericFeature('x1'),
+                StringCategoricalFeature('x2', ['zero', 'one']),
+                DerivedFeature(
+                    feature=RealNumericFeature(name='x3'),
+                    transformation=mapping
+                )
+            ],
+            output=[IntegerCategoricalFeature('output', ['neg', 'pos'])]
+        )
+        self.converter = DecisionTreeConverter(
+            estimator=self.est,
+            context=self.ctx,
+            mode=DecisionTreeConverter.MODE_CLASSIFICATION
+        )
+        self.converter.pmml().toxml()
 
 
 class TestDecisionTreeRegressorConverter(TestCase):
