@@ -6,7 +6,7 @@ from sklearn_pmml.convert.model import *
 from sklearn_pmml.convert.utils import *
 
 
-__all__ = ['TransformationContext', 'EstimatorConverter', 'find_converter', 'GradientBoostingConverter', 'LogOddsEstimatorConverter', 'DecisionTreeConverter']
+__all__ = ['TransformationContext', 'EstimatorConverter', 'find_converter', 'GradientBoostingConverter', 'LogOddsEstimatorConverter', 'DecisionTreeConverter', 'features']
 
 
 
