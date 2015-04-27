@@ -105,11 +105,12 @@ class EstimatorConverter(object):
         :param verification_data: list of dictionaries
         :return: ModelVerification element
         """
+        verification_data = pd.DataFrame(verification_data)
         fields = self.context.schemas[self.SCHEMA_INPUT] + self.context.schemas[self.SCHEMA_OUTPUT]
         assert len(verification_data) > 0, 'Verification data can not be empty'
-        assert len(verification_data[0]) == len(fields), \
+        assert len(verification_data.columns) == len(fields), \
             'Number of fields in validation data should match to input and output schema fields'
-        mv = pmml.ModelVerification(recordCount=len(verification_data), fieldCount=len(verification_data[0]))
+        mv = pmml.ModelVerification(recordCount=len(verification_data), fieldCount=len(verification_data.columns))
 
         # step one: build verification schema
         verification_fields = pmml.VerificationFields()
@@ -123,7 +124,8 @@ class EstimatorConverter(object):
 
         # step two: build data table
         it = pmml.InlineTable()
-        for data in verification_data:
+        for data in verification_data.iterrows():
+            data = data[1]
             row = pmml.row()
             for f in fields:
                 col = bds().createChildElement(f.name)
@@ -133,7 +135,6 @@ class EstimatorConverter(object):
         mv.append(it)
 
         return mv
-
 
     def mining_schema(self):
         """

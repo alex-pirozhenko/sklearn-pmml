@@ -82,6 +82,26 @@ class DerivedFeatureTransformations(object):
         """
         Takes an arithmetic operations tree (Lisp-styled) as an input
         """
+
+        def basic_function(func_name, args):
+            expr = pmml.Apply(function=func_name)
+            for a in args:
+                expr.append(a[1])
+            return expr
+
+        def mod_function(args):
+            expr = pmml.Apply(function='-')
+            expr.append(args[0])
+            mul = pmml.Apply(function='*')
+            mul.append(args[1])
+            floor = pmml.Apply(function='floor')
+            mul.append(floor)
+            div = pmml.Apply(function='/')
+            floor.append(div)
+            div.append(args[0])
+            div.append(args[1])
+            return expr
+
         # TODO: test me
         def greedy_evaluation(node):
             if isinstance(node, str):
@@ -90,17 +110,23 @@ class DerivedFeatureTransformations(object):
             elif isinstance(node, (tuple, list)):
                 # eval arguments
                 args = map(greedy_evaluation, node[1:])
-                assert isinstance(node[0], str), 'First element'
-                expr = pmml.Apply(function=node[0])
-                for a in args:
-                    expr.append(a[1])
-                func = {
+                functions = {
                     '*': lambda df: np.multiply(*[_[0](df) for _ in args]),
                     '-': lambda df: np.subtract(*[_[0](df) for _ in args]),
                     '+': lambda df: np.add(*[_[0](df) for _ in args]),
                     '/': lambda df: np.divide(*[_[0](df) for _ in args]),
                     '%': lambda df: np.mod(*[_[0](df) for _ in args]),
-                }[node[0]]
+                }
+                assert isinstance(node[0], str), 'First element should be a code of operation'
+                assert node[0] in functions, 'Unknown function code {}. Supported codes: {}'.format(node[0], functions.keys())
+                expr = {
+                    '*': partial(basic_function, '*'),
+                    '-': partial(basic_function, '-'),
+                    '+': partial(basic_function, '+'),
+                    '/': partial(basic_function, '/'),
+                    '%': mod_function
+                }.get(node[0])([a[1] for a in args])
+                func = functions[node[0]]
                 return func, expr
             else:
                 # numeric terminal
