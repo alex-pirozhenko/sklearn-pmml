@@ -106,7 +106,7 @@ class EstimatorConverter(object):
         :return: ModelVerification element
         """
         verification_data = pd.DataFrame(verification_data)
-        fields = self.context.schemas[self.SCHEMA_INPUT] + self.context.schemas[self.SCHEMA_OUTPUT]
+        fields = [_ for _ in self.context.schemas[self.SCHEMA_INPUT] if not isinstance(_, DerivedFeature)] + self.context.schemas[self.SCHEMA_OUTPUT]
         assert len(verification_data) > 0, 'Verification data can not be empty'
         assert len(verification_data.columns) == len(fields), \
             'Number of fields in validation data should match to input and output schema fields'
@@ -127,9 +127,9 @@ class EstimatorConverter(object):
         for data in verification_data.iterrows():
             data = data[1]
             row = pmml.row()
-            for f in fields:
-                col = bds().createChildElement(f.name)
-                bds().appendTextChild(data[f.name], col)
+            for key in verification_data.columns:
+                col = bds().createChildElement(key)
+                bds().appendTextChild(data[key], col)
                 row.append(col)
             it.append(row)
         mv.append(it)

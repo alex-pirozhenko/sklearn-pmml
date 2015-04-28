@@ -86,7 +86,7 @@ class DerivedFeatureTransformations(object):
         def basic_function(func_name, args):
             expr = pmml.Apply(function=func_name)
             for a in args:
-                expr.append(a[1])
+                expr.append(a)
             return expr
 
         def mod_function(args):
