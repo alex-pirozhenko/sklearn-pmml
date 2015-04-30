@@ -27,7 +27,11 @@ class EstimatorConverter(object):
     }
 
     SCHEMA_INPUT = 'input'
+    SCHEMA_DERIVED = 'derived'
+
     SCHEMA_NUMERIC = 'numeric'
+    SCHEMA_MODEL = 'model'
+
     SCHEMA_OUTPUT = 'output'
 
     EPSILON = 0.00001
@@ -38,6 +42,12 @@ class EstimatorConverter(object):
         self.context = context
 
         assert mode in self.all_modes, 'Unknown mode {}. Supported modes: {}'.format(mode, self.all_modes)
+        assert not any(isinstance(_, DerivedFeature) for _ in context.schemas[self.SCHEMA_INPUT]), \
+            'Input schema represents the input fields only'
+        assert all(isinstance(_, DerivedFeature) for _ in context.schemas[self.SCHEMA_DERIVED]), \
+            'Derived schema represents the set of automatically generated fields'
+        assert not any(isinstance(_, DerivedFeature) for _ in context.schemas[self.SCHEMA_OUTPUT]), \
+            'Only regular features allowed in output schema; use Output transformation if you want to transform values'
 
     def data_dictionary(self):
         """
@@ -45,12 +55,11 @@ class EstimatorConverter(object):
         """
         dd = pmml.DataDictionary()
         for f in self.context.schemas[self.SCHEMA_INPUT] + self.context.schemas[self.SCHEMA_OUTPUT]:
-            if not isinstance(f, DerivedFeature):
-                data_field = pmml.DataField(dataType=f.data_type, name=f.name, optype=f.optype)
-                dd.DataField.append(data_field)
-                if isinstance(f, CategoricalFeature):
-                    for v in f.value_list:
-                        data_field.append(pmml.Value(value_=v))
+            data_field = pmml.DataField(dataType=f.data_type, name=f.name, optype=f.optype)
+            dd.DataField.append(data_field)
+            if isinstance(f, CategoricalFeature):
+                for v in f.value_list:
+                    data_field.append(pmml.Value(value_=v))
         return dd
 
     def transformation_dictionary(self):
@@ -61,8 +70,24 @@ class EstimatorConverter(object):
         # define a schema with all variables available for a model
         encoded_schema = []
         self.context.schemas[self.SCHEMA_NUMERIC] = encoded_schema
+        idx = {}
 
+        # First, populate transformation dictionary for _all_ derived fields, because they can be requested later
+        for f in self.context.schemas[self.SCHEMA_DERIVED]:
+            ef = RealNumericFeature(name=f.name)
+            df = pmml.DerivedField(
+                name=ef.full_name,
+                optype=ef.optype,
+                dataType=ef.data_type
+            )
+            df.append(f.transformation)
+            td.append(df)
+            assert f.name not in idx, 'Duplicate field definition: {}'.format(f.name)
+            idx[f.name] = ef
+
+        # second, define the numeric transformations for the categorical variables
         for f in self.context.schemas[self.SCHEMA_INPUT]:
+            assert f.name not in idx, 'Duplicate field definition: {}'.format(f.name)
             if isinstance(f, CategoricalFeature):
                 ef = RealNumericFeature(name=f.name, namespace=self.SCHEMA_NUMERIC)
                 # create a record in transformation dictionary with mapping from raw values into numbers
@@ -77,20 +102,13 @@ class EstimatorConverter(object):
                 for i, v in enumerate(f.value_list):
                     it.append(pmml_row(input=v, output=i))
                 td.append(df.append(mv.append(it)))
-            elif isinstance(f, DerivedFeature):
-                ef = RealNumericFeature(name=f.name, namespace=self.SCHEMA_NUMERIC)
-                df = pmml.DerivedField(
-                    name=ef.full_name,
-                    optype=ef.optype,
-                    dataType=ef.data_type
-                )
-                df.append(f.transformation)
-                td.append(df)
+                idx[f.name] = ef
             else:
-                ef = RealNumericFeature(name=f.name)
+                idx[f.name] = f
 
-            encoded_schema.append(ef)
-        assert len(encoded_schema) == len(self.context.schemas[self.SCHEMA_INPUT])
+        # now we can build a mirror of model schema into the numeric schema
+        self.context.schemas[self.SCHEMA_NUMERIC] = [idx[f.name] for f in self.context.schemas[self.SCHEMA_MODEL]]
+
         return td
 
     def model(self, verification_data=None):
@@ -106,7 +124,7 @@ class EstimatorConverter(object):
         :return: ModelVerification element
         """
         verification_data = pd.DataFrame(verification_data)
-        fields = [_ for _ in self.context.schemas[self.SCHEMA_INPUT] if not isinstance(_, DerivedFeature)] + self.context.schemas[self.SCHEMA_OUTPUT]
+        fields = self.context.schemas[self.SCHEMA_INPUT] + self.context.schemas[self.SCHEMA_OUTPUT]
         assert len(verification_data) > 0, 'Verification data can not be empty'
         assert len(verification_data.columns) == len(fields), \
             'Number of fields in validation data should match to input and output schema fields'
@@ -142,10 +160,10 @@ class EstimatorConverter(object):
         """
         ms = pmml.MiningSchema()
 
-        for f in self.context.schemas[self.SCHEMA_INPUT]:
-            ms.append(pmml.MiningField(invalidValueTreatment=f.invalid_value_treatment, name=f.name))
+        for f in sorted(self.context.schemas[self.SCHEMA_INPUT], key=lambda _: _.full_name):
+            ms.append(pmml.MiningField(invalidValueTreatment=f.invalid_value_treatment, name=f.full_name))
 
-        for f in self.context.schemas[self.SCHEMA_OUTPUT]:
+        for f in sorted(self.context.schemas[self.SCHEMA_OUTPUT], key=lambda _: _.full_name):
             ms.append(pmml.MiningField(
                 name=f.full_name,
                 usageType="predicted"

@@ -3,15 +3,10 @@ import pandas as pd
 class Feature(object):
     INVALID_TREATMENT_AS_IS = 'asIs'
 
-    def __init__(self, name, namespace='', invalid_value_treatment=INVALID_TREATMENT_AS_IS, model_input=True):
+    def __init__(self, name, namespace='', invalid_value_treatment=INVALID_TREATMENT_AS_IS):
         self._name = name
         self._namespace = namespace
         self._invalid_value_treatment = invalid_value_treatment
-        self._model_input = model_input
-
-    @property
-    def model_input(self):
-        return self._model_input
 
     @property
     def name(self):
@@ -19,7 +14,7 @@ class Feature(object):
 
     @property
     def namespace(self):
-        return self._name
+        return self._namespace
 
     @property
     def full_name(self):
@@ -80,8 +75,8 @@ class CategoricalFeature(Feature):
     dataType. The corresponding derived field will have a double data type and will be defined as a MapValues PMML
     element.
     """
-    def __init__(self, name, value_list, namespace='', invalid_value_treatment=Feature.INVALID_TREATMENT_AS_IS, model_input=True):
-        super(CategoricalFeature, self).__init__(name, namespace, invalid_value_treatment, model_input)
+    def __init__(self, name, value_list, namespace='', invalid_value_treatment=Feature.INVALID_TREATMENT_AS_IS):
+        super(CategoricalFeature, self).__init__(name, namespace, invalid_value_treatment)
         self.value_list = value_list
 
     @property
