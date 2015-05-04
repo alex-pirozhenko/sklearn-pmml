@@ -22,6 +22,8 @@ class TestDecisionTreeClassifierConverter(TestCase):
         ], [0, 1, 1, 1])
         self.ctx = TransformationContext(
             input=[IntegerNumericFeature('x1'), StringCategoricalFeature('x2', ['zero', 'one'])],
+            model=[IntegerNumericFeature('x1'), StringCategoricalFeature('x2', ['zero', 'one'])],
+            derived=[],
             output=[IntegerCategoricalFeature('output', ['neg', 'pos'])]
         )
         self.converter = DecisionTreeConverter(
@@ -60,10 +62,17 @@ class TestDecisionTreeClassifierConverter(TestCase):
             input=[
                 IntegerNumericFeature('x1'),
                 StringCategoricalFeature('x2', ['zero', 'one']),
+            ],
+            derived=[
                 DerivedFeature(
                     feature=RealNumericFeature(name='x3'),
                     transformation=mapping
                 )
+            ],
+            model=[
+                IntegerNumericFeature('x1'),
+                StringCategoricalFeature('x2', ['zero', 'one']),
+                RealNumericFeature(name='x3')
             ],
             output=[IntegerCategoricalFeature('output', ['neg', 'pos'])]
         )
@@ -87,6 +96,8 @@ class TestDecisionTreeRegressorConverter(TestCase):
         ], [0, 1, 1, 1])
         self.ctx = TransformationContext(
             input=[IntegerNumericFeature('x1'), StringCategoricalFeature('x2', ['zero', 'one'])],
+            model=[IntegerNumericFeature('x1'), StringCategoricalFeature('x2', ['zero', 'one'])],
+            derived=[],
             output=[IntegerNumericFeature('output')]
         )
         self.converter = DecisionTreeConverter(

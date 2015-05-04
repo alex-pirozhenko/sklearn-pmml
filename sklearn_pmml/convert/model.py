@@ -1,3 +1,4 @@
+from collections import defaultdict
 from sklearn_pmml import pmml
 from sklearn_pmml.convert.utils import pmml_row
 from sklearn_pmml.convert.features import *

@@ -20,6 +20,8 @@ class TestGradientBoostingClassifierConverter(TestCase):
         ], [0, 1, 1, 1])
         self.ctx = TransformationContext(
             input=[IntegerNumericFeature('x1'), StringCategoricalFeature('x2', ['zero', 'one'])],
+            derived=[],
+            model=[IntegerNumericFeature('x1'), StringCategoricalFeature('x2', ['zero', 'one'])],
             output=[RealNumericFeature('output')]
         )
         self.converter = GradientBoostingConverter(

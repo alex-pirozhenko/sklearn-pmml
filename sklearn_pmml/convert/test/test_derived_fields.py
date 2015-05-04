@@ -7,6 +7,8 @@ test_cases = [
     (
         [
             RealNumericFeature(name='f1'),
+        ],
+        [
             DerivedFeature(
                 feature=RealNumericFeature(name='f2'),
                 transformation=pmml.Discretize(mapMissingTo=0, defaultValue=1, field='f1')
@@ -22,18 +24,23 @@ test_cases = [
 
         '<?xml version="1.0" ?>'
         '<ns1:TransformationDictionary xmlns:ns1="http://www.dmg.org/PMML-4_2">'
-        '<ns1:DerivedField dataType="double" name="numeric::f2" optype="continuous">'
+        '<ns1:DerivedField dataType="double" name="f2" optype="continuous">'
         '<ns1:Discretize defaultValue="1" field="f1" mapMissingTo="0"/>'
         '</ns1:DerivedField>'
         '</ns1:TransformationDictionary>'
     )
 ]
 
-@pytest.mark.parametrize("input_fields,output_fields,expected_data_dictionary,expected_transformation_dictionary", test_cases)
-def test_transformation_dictionary(input_fields, output_fields, expected_data_dictionary, expected_transformation_dictionary):
+@pytest.mark.parametrize("input_fields,derived_fields,output_fields,expected_data_dictionary,expected_transformation_dictionary", test_cases)
+def test_transformation_dictionary(input_fields, derived_fields, output_fields, expected_data_dictionary, expected_transformation_dictionary):
     converter = EstimatorConverter(
         DecisionTreeClassifier(),
-        context=TransformationContext(input=input_fields, output=output_fields),
+        context=TransformationContext(
+            input=input_fields,
+            derived=derived_fields,
+            model=input_fields+derived_fields,
+            output=output_fields
+        ),
         mode=EstimatorConverter.MODE_CLASSIFICATION
     )
 
