@@ -3,6 +3,7 @@ from sklearn_pmml import pmml
 from sklearn_pmml.convert.utils import pmml_row
 from sklearn_pmml.convert.features import *
 from pyxb.utils.domutils import BindingDOMSupport as bds
+import numpy as np
 
 
 class TransformationContext(object):
@@ -146,11 +147,15 @@ class EstimatorConverter(object):
         for data in verification_data.iterrows():
             data = data[1]
             row = pmml.row()
+            row_empty = True
             for key in verification_data.columns:
-                col = bds().createChildElement(key)
-                bds().appendTextChild(data[key], col)
-                row.append(col)
-            it.append(row)
+                if verification_data[key].dtype == object or not np.isnan(data[key]):
+                    col = bds().createChildElement(key)
+                    bds().appendTextChild(data[key], col)
+                    row.append(col)
+                    row_empty = False
+            if not row_empty:
+                it.append(row)
         mv.append(it)
 
         return mv
