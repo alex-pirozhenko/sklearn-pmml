@@ -99,7 +99,7 @@ class GradientBoostingConverter(EstimatorConverter):
         for est in self.estimator.estimators_[:, 0]:
             s = pmml.Segment(weight=self.estimator.learning_rate)
             s.append(pmml.True_())
-            s.append(DecisionTreeConverter(est, self.context, self.MODE_REGRESSION).model())
+            s.append(DecisionTreeConverter(est, self.context, self.MODE_REGRESSION)._model())
             segmentation.append(s)
 
         return segmentation
