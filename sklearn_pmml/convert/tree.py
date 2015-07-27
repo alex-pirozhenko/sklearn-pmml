@@ -56,17 +56,9 @@ class DecisionTreeConverter(EstimatorConverter):
         assert self.SCHEMA_NUMERIC in self.context.schemas, \
             'Either build transformation dictionary or provide {} schema in context'.format(self.SCHEMA_NUMERIC)
         tm = self._model()
-        mining_model = pmml.MiningModel(functionName=self.model_function_name)
-        mining_model.append(self.mining_schema())
-        segmentation = pmml.Segmentation(multipleModelMethod="weightedAverage")
-        segment = pmml.Segment(weight=1)
-        segment.append(pmml.True_())
-        segment.append(tm)
-        segmentation.append(segment)
-        mining_model.append(segmentation)
         if verification_data is not None:
-            mining_model.append(self.model_verification(verification_data))
-        return mining_model
+            tm.append(self.model_verification(verification_data))
+        return tm
 
     def _transform_node(self, tree, index, input_schema, output_feature, enter_condition=None):
         """
