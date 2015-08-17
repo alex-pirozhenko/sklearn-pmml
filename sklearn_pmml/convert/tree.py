@@ -44,6 +44,7 @@ class DecisionTreeConverter(EstimatorConverter):
             'Either build transformation dictionary or provide {} schema in context'.format(self.SCHEMA_NUMERIC)
         tm = pmml.TreeModel(functionName=self.model_function_name, splitCharacteristic=self.SPLIT_BINARY)
         tm.append(self.mining_schema())
+        tm.append(self.output())
         tm.Node = self._transform_node(
             self.estimator.tree_,
             self.NODE_ROOT,
