@@ -123,8 +123,7 @@ class TestDecisionTreeClassificationJPMMLParity(TestCase, JPMMLClassificationTes
 
     def setUp(self):
         self.model = DecisionTreeClassifier()
-        super(TestDecisionTreeClassificationJPMMLParity, self).init_data()
-        super(TestDecisionTreeClassificationJPMMLParity, self).setUp()
+        self.init_data()
         self.converter = DecisionTreeConverter(
             estimator=self.model,
             context=self.ctx,
@@ -135,8 +134,7 @@ class TestDecisionTreeRegressionJPMMLParity(TestCase, JPMMLRegressionTest):
 
     def setUp(self):
         self.model = DecisionTreeRegressor()
-        super(TestDecisionTreeRegressionJPMMLParity, self).init_data()
-        super(TestDecisionTreeRegressionJPMMLParity, self).setUp()
+        self.init_data()
         self.converter = DecisionTreeConverter(
             estimator=self.model,
             context=self.ctx,

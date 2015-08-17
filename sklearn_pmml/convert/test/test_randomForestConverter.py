@@ -12,14 +12,16 @@ class TestRandomForestClassifierParity(TestCase, JPMMLClassificationTest):
 
     @classmethod
     def setUpClass(cls):
-        JPMMLTest.init_jpmml()
+        if JPMMLTest.can_run():
+            JPMMLTest.init_jpmml()
 
 
     def setUp(self):
         self.model = RandomForestClassifier()
-        super(TestRandomForestClassifierParity, self).init_data()
-        super(TestRandomForestClassifierParity, self).setUp()
+        self.init_data()
         self.converter = RandomForestClassifierConverter(
             estimator=self.model,
             context=self.ctx
         )
+
+
