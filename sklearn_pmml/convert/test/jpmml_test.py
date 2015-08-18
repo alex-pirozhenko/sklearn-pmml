@@ -106,7 +106,7 @@ class JPMMLTest():
         return pd.read_csv(target_file_path)
 
     def init_data(self):
-        np.random.seed(12323444556)
+        np.random.seed(12363)
         self.x = pd.DataFrame(np.random.randn(500, 10))
         self.y = pd.DataFrame({_TARGET_NAME:[np.random.choice([0, 1, 2]) for _ in range(self.x.shape[0])]})
         self._model.fit(self.x, np.ravel(self.y))
