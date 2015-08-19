@@ -10,6 +10,7 @@ before_install:
   - sudo apt-get install oracle-java8-installer -y
   - sudo apt-get install oracle-java8-set-default -y
   - sudo apt-get install maven -y
+  - reset
   - mvn -version
   - javac -version
   - java -version
@@ -19,7 +20,7 @@ before_install:
   - ./miniconda.sh -b
   - export PATH=/home/travis/miniconda/bin:$PATH
   - conda update --yes conda
-  - travis_retry conda install --yes python=$TRAVIS_PYTHON_VERSION pip numpy scipy scikit-learn pandas pyxb lxml
+  - travis_retry conda install --yes python=$TRAVIS_PYTHON_VERSION pip numpy scipy scikit-learn pandas lxml
 
 install:
   - travis_retry pip install -r requirements.txt
