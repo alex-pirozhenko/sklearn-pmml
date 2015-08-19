@@ -10,7 +10,7 @@ before_install:
   - sudo apt-get install oracle-java8-installer -y
   - sudo apt-get install oracle-java8-set-default -y
   - sudo apt-get install maven -y
-  - reset
+  - export JAVA_HOME=/usr/lib/jvm/java-8-oracle/jre
   - mvn -version
   - javac -version
   - java -version
