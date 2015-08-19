@@ -19,8 +19,8 @@ _TEST_DIR = 'jpmml_test_data'
 logging.basicConfig(format='%(asctime)s %(message)s')
 
 #Adapted from http://stackoverflow.com/questions/1724693/find-a-file-in-python
-def find_file_or_dir(name):
-    for root, dirs, files in os.walk('.'):
+def find_file_or_dir(name, base_path=os.path.dirname(__file__)):
+    for root, dirs, files in os.walk(base_path):
         if name in files or name in dirs:
             return os.path.join(root, name)
 
@@ -100,8 +100,19 @@ class JPMMLTest():
         self.x.to_csv(input_file_path,index=False)
         target_file_path = os.path.join(_TEST_DIR, pmml_hash + '_output.csv')
 
-        java_args = ' '.join([os.path.abspath(pmml_file_path), os.path.abspath(input_file_path), os.path.abspath(target_file_path)])
-        result = subprocess.call(['mvn', 'exec:java', '-q', '-f', find_file_or_dir('jpmml-csv-evaluator'), '-Dexec.mainClass=sklearn.pmml.jpmml.JPMMLCSVEvaluator', '-Dexec.args=' + java_args])
+        java_args = ' '.join(
+            "'" + _ + "'"
+            for _ in [
+                os.path.abspath(pmml_file_path),
+                os.path.abspath(input_file_path),
+                os.path.abspath(target_file_path)
+            ]
+        )
+        result = subprocess.call([
+            'mvn', 'exec:java', '-q', '-f', find_file_or_dir('jpmml-csv-evaluator'),
+            '-Dexec.mainClass=sklearn.pmml.jpmml.JPMMLCSVEvaluator',
+            '-Dexec.args=' + java_args
+        ])
         self.assertEqual(result, 0, 'Executing jpmml evaluator returned non zero result')
         return pd.read_csv(target_file_path)
 
