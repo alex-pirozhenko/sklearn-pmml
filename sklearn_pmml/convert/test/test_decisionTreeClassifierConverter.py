@@ -1,7 +1,7 @@
 from unittest import TestCase
 
 import numpy as np
-from jpmml_test import JPMMLClassificationTest, JPMMLRegressionTest
+from .jpmml_test import JPMMLClassificationTest, JPMMLRegressionTest
 
 from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
 
