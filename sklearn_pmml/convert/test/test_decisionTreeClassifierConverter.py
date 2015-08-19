@@ -1,6 +1,7 @@
 from unittest import TestCase
 
 import numpy as np
+from jpmml_test import JPMMLClassificationTest, JPMMLRegressionTest
 
 from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
 
@@ -8,6 +9,8 @@ from sklearn_pmml.convert import TransformationContext, pmml_row
 from sklearn_pmml.convert.features import *
 from sklearn_pmml.convert.tree import DecisionTreeConverter
 from sklearn_pmml import pmml
+
+from unittest import TestCase
 
 
 class TestDecisionTreeClassifierConverter(TestCase):
@@ -114,3 +117,26 @@ class TestDecisionTreeRegressorConverter(TestCase):
         assert tm.Node is not None, 'Missing root node'
         assert tm.Node.recordCount == 4
         assert tm.Node.True_ is not None, 'Root condition should always be True'
+
+
+class TestDecisionTreeClassificationJPMMLParity(TestCase, JPMMLClassificationTest):
+
+    def setUp(self):
+        self.model = DecisionTreeClassifier()
+        self.init_data()
+        self.converter = DecisionTreeConverter(
+            estimator=self.model,
+            context=self.ctx,
+            mode=DecisionTreeConverter.MODE_CLASSIFICATION
+        )
+
+class TestDecisionTreeRegressionJPMMLParity(TestCase, JPMMLRegressionTest):
+
+    def setUp(self):
+        self.model = DecisionTreeRegressor()
+        self.init_data()
+        self.converter = DecisionTreeConverter(
+            estimator=self.model,
+            context=self.ctx,
+            mode=DecisionTreeConverter.MODE_REGRESSION
+        )

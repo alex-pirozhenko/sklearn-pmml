@@ -64,6 +64,23 @@ class EstimatorConverter(object):
                     data_field.append(pmml.Value(value_=v))
         return dd
 
+    def output(self):
+        output = pmml.Output()
+        output_field = pmml.OutputField(name=self.context.schemas[self.SCHEMA_OUTPUT][0], feature='predictedValue')
+        output.append(output_field)
+        for output_variable in self.context.schemas[self.SCHEMA_OUTPUT]:
+            if isinstance(output_variable, CategoricalFeature):
+                for output_value in output_variable.value_list:
+                    output_field = pmml.OutputField(name='Probability_' + str(output_value),
+                                                    optype='continuous',
+                                                    dataType='double',
+                                                    feature='probability',
+                                                    targetField=str(output_variable),
+                                                    value_=str(output_value))
+                    output.append(output_field)
+        return output
+
+
     def transformation_dictionary(self):
         """
         Build a transformation dictionary and return a TransformationDictionary element

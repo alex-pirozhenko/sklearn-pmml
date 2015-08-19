@@ -7,3 +7,4 @@ A library that allows serialization of SciKit-Learn estimators into PMML
 - DecisionTreeClassifier
 - DecisionTreeRegressor
 - GradientBoostingClassifier
+- RandomForestClassifier
