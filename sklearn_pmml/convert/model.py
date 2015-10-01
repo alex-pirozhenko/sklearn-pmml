@@ -66,20 +66,19 @@ class EstimatorConverter(object):
 
     def output(self):
         output = pmml.Output()
-        output_field = pmml.OutputField(name=self.context.schemas[self.SCHEMA_OUTPUT][0], feature='predictedValue')
-        output.append(output_field)
-        for output_variable in self.context.schemas[self.SCHEMA_OUTPUT]:
-            if isinstance(output_variable, CategoricalFeature):
-                for output_value in output_variable.value_list:
-                    output_field = pmml.OutputField(name='Probability_' + str(output_value),
+        for output_label in self.context.schemas[self.SCHEMA_OUTPUT]:
+            output_field = pmml.OutputField(name='output::' + str(output_label), feature='predictedValue')
+            output.append(output_field)
+            if isinstance(output_label, CategoricalFeature):
+                for output_value in output_label.value_list:
+                    output_field = pmml.OutputField(name='output::' + str(output_label) + '::' + str(output_value),
                                                     optype='continuous',
                                                     dataType='double',
                                                     feature='probability',
-                                                    targetField=str(output_variable),
+                                                    targetField=str(output_label),
                                                     value_=str(output_value))
                     output.append(output_field)
         return output
-
 
     def transformation_dictionary(self):
         """

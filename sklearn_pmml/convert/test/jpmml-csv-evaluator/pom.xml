@@ -14,14 +14,14 @@
             <groupId>org.jpmml</groupId>
             <artifactId>pmml-evaluator</artifactId>
             <!-- DO NOT UPGRADE: newer versions are licensed under AGPL -->
-            <version>1.0.22</version>
+            <version>1.2.5</version>
         </dependency>
 
         <dependency>
             <groupId>org.jpmml</groupId>
             <artifactId>pmml-model</artifactId>
             <!-- OK to upgrade this one: released under BSD 3-clause. Must not upgrade pmml-evaluator.  -->
-            <version>1.0.22</version>
+            <version>1.2.6</version>
         </dependency>
 
         <dependency>
