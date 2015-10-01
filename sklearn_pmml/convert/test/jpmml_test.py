@@ -6,7 +6,7 @@ import os
 import shutil
 import subprocess
 import logging
-from lxml import etree
+
 
 from sklearn_pmml.convert import TransformationContext
 from sklearn_pmml.convert.features import *
@@ -120,7 +120,7 @@ class JPMMLTest():
 
     def init_data(self):
         np.random.seed(12363)
-        self.x = pd.DataFrame(np.random.randn(500, 10))
+        self.x = pd.DataFrame(np.random.randn(500, 4))
         self.y = pd.DataFrame({_TARGET_NAME:[np.random.choice([0, 1, 2]) for _ in range(self.x.shape[0])]})
         self._model.fit(self.x, np.ravel(self.y))
         self.ctx = TransformationContext(
@@ -132,14 +132,14 @@ class JPMMLTest():
 
     def init_data_one_label(self):
         np.random.seed(12363)
-        self.x = pd.DataFrame(np.random.randn(500, 10), columns=['col_'+str(_) for _ in range(10)])
+        self.x = pd.DataFrame(np.random.randn(500, 4), columns=['col_'+str(_) for _ in range(4)])
         self.y = pd.DataFrame({_TARGET_NAME:[np.random.choice([0, 1]) for _ in range(self.x.shape[0])]})
         self._model.fit(self.x, np.ravel(self.y))
         self.ctx = TransformationContext(
             input=[RealNumericFeature(col) for col in self.x.columns],
             derived=[],
             model=[RealNumericFeature(col) for col in self.x.columns],
-            output=[RealNumericFeature('y')]
+            output=[self.output]
         )
 
 
@@ -167,7 +167,7 @@ class JPMMLClassificationTest(JPMMLTest):
 
     @property
     def output(self):
-        return IntegerCategoricalFeature(_TARGET_NAME, _TARGET)
+        return StringCategoricalFeature(_TARGET_NAME, _TARGET)
 
     def test_classification(self):
 
@@ -176,11 +176,12 @@ class JPMMLClassificationTest(JPMMLTest):
             return
 
         raw_sklearn_predictions = self.converter.estimator.predict_proba(self.x)
-        prob_outputs = ['Probability_' + str(clazz) for clazz in self.converter.estimator.classes_]
+        prob_outputs = ['output::' + str(self.output) + '::' + str(clazz) for clazz in self.converter.estimator.classes_]
         sklearn_predictions = pd.DataFrame(columns=prob_outputs)
         for index, prediction in enumerate(raw_sklearn_predictions):
             sklearn_predictions.loc[index] = list(prediction)
-        self.assertTrue(np.all(jpmml_predictions[_TARGET_NAME] == sklearn_predictions['Probability_1']))
-
+        self.assertTrue(not np.testing.assert_almost_equal(
+            np.array(jpmml_predictions[list(sklearn_predictions.columns)]),
+            sklearn_predictions))
 
 
