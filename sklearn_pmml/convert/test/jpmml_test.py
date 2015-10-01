@@ -20,12 +20,16 @@ logging.basicConfig(format='%(asctime)s %(message)s')
 
 #Adapted from http://stackoverflow.com/questions/1724693/find-a-file-in-python
 def find_file_or_dir(name):
-    for root, dirs, files in os.walk('.'):
+    for root, dirs, files in os.walk(os.path.dirname(__file__)):
         if name in files or name in dirs:
             return os.path.join(root, name)
 
 
 class JPMMLTest():
+
+    def __init__(self):
+        self.x = None
+        self.y = None
 
     @staticmethod
     def can_run():
@@ -84,12 +88,21 @@ class JPMMLTest():
         os.makedirs(_TEST_DIR)
 
         #evancox This is a hack to allow us to mark the version down as 4.1 so we can run with the BSD version of JPMML rather than the AGPL one
+        verification_data = self.x.copy()
+        verification_data[_TARGET_NAME] = self._model.predict_proba(self.x.values)[:, 1]
+        # xml = self.converter.pmml(verification_data=[
+        #     dict((str(_[0]), _[1]) for _ in dict(row).items())
+        #     for idx, row in verification_data[:10].iterrows()
+        # ]).toxml("utf-8")
+
+
         xml = self.converter.pmml().toxml("utf-8")
-        pmml = etree.fromstring(xml)
-        pmml.set('version', '4.1')
-        JPMMLTest.remove_namespace(pmml, 'http://www.dmg.org/PMML-4_2')
-        xml = etree.tostring(pmml, pretty_print=True)
-        xml = xml.replace('http://www.dmg.org/PMML-4_2', 'http://www.dmg.org/PMML-4_1')
+
+        # pmml = etree.fromstring(xml)
+        # pmml.set('version', '4.1')
+        # JPMMLTest.remove_namespace(pmml, 'http://www.dmg.org/PMML-4_2')
+        # xml = etree.tostring(pmml, pretty_print=True)
+        # xml = xml.replace('http://www.dmg.org/PMML-4_2', 'http://www.dmg.org/PMML-4_1')
 
         pmml_hash = hashlib.md5(xml).hexdigest()
         pmml_file_path = os.path.join(_TEST_DIR, pmml_hash + '.pmml')
@@ -101,7 +114,7 @@ class JPMMLTest():
         target_file_path = os.path.join(_TEST_DIR, pmml_hash + '_output.csv')
 
         java_args = ' '.join([os.path.abspath(pmml_file_path), os.path.abspath(input_file_path), os.path.abspath(target_file_path)])
-        result = subprocess.call(['mvn', 'exec:java', '-q', '-f', find_file_or_dir('jpmml-csv-evaluator'), '-Dexec.mainClass=sklearn.pmml.jpmml.JPMMLCSVEvaluator', '-Dexec.args=' + java_args])
+        result = subprocess.call(['mvn', 'exec:java', '-q', '-f', find_file_or_dir('jpmml-csv-evaluator'), '-Dexec.mainClass=sklearn.pmml.jpmml.JPMMLCSVEvaluator', '-Dexec.args=' + java_args, '-e'])
         self.assertEqual(result, 0, 'Executing jpmml evaluator returned non zero result')
         return pd.read_csv(target_file_path)
 
@@ -116,6 +129,19 @@ class JPMMLTest():
             model=[RealNumericFeature(col) for col in list(self.x)],
             output=[self.output]
         )
+
+    def init_data_one_label(self):
+        np.random.seed(12363)
+        self.x = pd.DataFrame(np.random.randn(500, 10), columns=['col_'+str(_) for _ in range(10)])
+        self.y = pd.DataFrame({_TARGET_NAME:[np.random.choice([0, 1]) for _ in range(self.x.shape[0])]})
+        self._model.fit(self.x, np.ravel(self.y))
+        self.ctx = TransformationContext(
+            input=[RealNumericFeature(col) for col in self.x.columns],
+            derived=[],
+            model=[RealNumericFeature(col) for col in self.x.columns],
+            output=[RealNumericFeature('y')]
+        )
+
 
 
 
@@ -154,7 +180,7 @@ class JPMMLClassificationTest(JPMMLTest):
         sklearn_predictions = pd.DataFrame(columns=prob_outputs)
         for index, prediction in enumerate(raw_sklearn_predictions):
             sklearn_predictions.loc[index] = list(prediction)
-        self.assertTrue(np.all(jpmml_predictions[prob_outputs] == sklearn_predictions))
+        self.assertTrue(np.all(jpmml_predictions[_TARGET_NAME] == sklearn_predictions['Probability_1']))
 
 
 

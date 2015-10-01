@@ -4,18 +4,19 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import com.google.common.collect.Sets;
-import org.dmg.pmml.FieldName;
-import org.dmg.pmml.IOUtil;
 import org.dmg.pmml.PMML;
+import org.dmg.pmml.FieldName;
+import org.jpmml.model.JAXBUtil;
+import org.jpmml.model.ImportFilter;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorFactory;
-import org.jpmml.manager.PMMLManager;
 import org.supercsv.io.CsvMapReader;
 import org.supercsv.io.CsvMapWriter;
 import org.supercsv.prefs.CsvPreference;
 import org.xml.sax.SAXException;
+import org.xml.sax.InputSource;
 
 import javax.xml.bind.JAXBException;
 
@@ -43,7 +44,7 @@ public class JPMMLCSVEvaluator
     {
         try
         {
-            return IOUtil.unmarshal(is);
+            return JAXBUtil.unmarshalPMML(ImportFilter.apply(new InputSource(is)));
         }
         catch (SAXException | JAXBException e)
         {
@@ -53,8 +54,9 @@ public class JPMMLCSVEvaluator
 
     static Evaluator evaluatorFromPmml(final PMML pmml)
     {
-        final PMMLManager pmmlManager = new PMMLManager(pmml);
-        final ModelEvaluator<?> modelEvaluator = (ModelEvaluator<?>) pmmlManager.getModelManager(null, ModelEvaluatorFactory.getInstance());
+        ModelEvaluatorFactory modelEvaluatorFactory = ModelEvaluatorFactory.newInstance();
+
+        ModelEvaluator<?> modelEvaluator = modelEvaluatorFactory.newModelManager(pmml);
 
         return modelEvaluator;
     }
@@ -132,6 +134,7 @@ public class JPMMLCSVEvaluator
         try
         {
             Evaluator evaluator = evaluatorFromXml(new FileInputStream(pmmlFile));
+//            evaluator.verify();
             final List<Map<FieldName, ?>> predictions = getPredictions(evaluator, csvFeaturesFile);
             writePredictions(evaluator, predictions, outputFile);
             logger.info(String.format("Wrote %d predictions from %s to %s", predictions.size(), csvFeaturesFile, outputFile));

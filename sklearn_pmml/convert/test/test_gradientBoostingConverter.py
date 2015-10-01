@@ -3,6 +3,7 @@ from unittest import TestCase
 from sklearn.ensemble import GradientBoostingClassifier
 import numpy as np
 
+from sklearn_pmml.convert.test.jpmml_test import JPMMLClassificationTest, JPMMLTest, _TARGET_NAME
 from sklearn_pmml.convert import TransformationContext
 from sklearn_pmml.convert.features import *
 from sklearn_pmml.convert.gbrt import GradientBoostingConverter
@@ -48,3 +49,18 @@ class TestGradientBoostingClassifierConverter(TestCase):
         assert len(mm.MiningSchema.MiningField) == 3, 'Wrong number of mining fields'
         assert mm.Segmentation is not None, 'Missing segmentation root'
 
+
+class TestGradientBoostingClassifierParity(TestCase, JPMMLClassificationTest):
+
+    @classmethod
+    def setUpClass(cls):
+        if JPMMLTest.can_run():
+            JPMMLTest.init_jpmml()
+
+    def setUp(self):
+        self.model = GradientBoostingClassifier(n_estimators=2)
+        self.init_data_one_label()
+        self.converter = GradientBoostingConverter(
+            estimator=self.model,
+            context=self.ctx
+        )
