@@ -30,7 +30,7 @@ class RandomForestClassifierConverter(EstimatorConverter):
         Build a segmentation (sequence of estimators)
         :return: Segmentation element
         """
-        segmentation = pmml.Segmentation(multipleModelMethod="majorityVote")
+        segmentation = pmml.Segmentation(multipleModelMethod="weightedAverage")
 
         for index, est in enumerate(self.estimator.estimators_):
             s = pmml.Segment(id=index)
