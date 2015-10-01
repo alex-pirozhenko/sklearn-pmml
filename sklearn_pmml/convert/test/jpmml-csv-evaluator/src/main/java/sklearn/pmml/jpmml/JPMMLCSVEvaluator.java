@@ -97,11 +97,11 @@ public class JPMMLCSVEvaluator
 
     static void writePredictions(Evaluator evaluator, List<Map<FieldName, ?>> predictions, String outputFile) throws IOException
     {
-        final int outputFieldCount = evaluator.getOutputFields().size();
+        final int outputFieldCount = predictions.get(0).keySet().size();
         final Set<FieldName> outputFields = Sets.newHashSetWithExpectedSize(outputFieldCount);
         final String[] header = new String[outputFieldCount];
         int index = 0;
-        for (FieldName fieldName : evaluator.getOutputFields())
+        for (FieldName fieldName : predictions.get(0).keySet())
         {
             outputFields.add(fieldName);
             header[index++] = fieldName.toString();
