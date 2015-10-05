@@ -1,0 +1,145 @@
+<?xml version="1.0" ?>
+<ns1:PMML xmlns:ns1="http://www.dmg.org/PMML-4_2" version="4.2">
+    <ns1:Header/>
+    <ns1:DataDictionary>
+        <ns1:DataField dataType="string" name="internal::y" optype="categorical">
+            <ns1:Value value="negative"/>
+            <ns1:Value value="positive"/>
+        </ns1:DataField>
+        <ns1:DataField dataType="string" name="y" optype="categorical">
+            <ns1:Value value="negative"/>
+            <ns1:Value value="positive"/>
+        </ns1:DataField>
+        <ns1:DataField dataType="double" name="col_0" optype="continuous"/>
+        <ns1:DataField dataType="double" name="col_1" optype="continuous"/>
+        <ns1:DataField dataType="double" name="col_2" optype="continuous"/>
+        <ns1:DataField dataType="double" name="col_3" optype="continuous"/>
+    </ns1:DataDictionary>
+    <ns1:TransformationDictionary/>
+    <ns1:MiningModel functionName="regression">
+        <ns1:MiningSchema>
+            <ns1:MiningField invalidValueTreatment="asIs" name="col_0"/>
+            <ns1:MiningField invalidValueTreatment="asIs" name="col_1"/>
+            <ns1:MiningField invalidValueTreatment="asIs" name="col_2"/>
+            <ns1:MiningField invalidValueTreatment="asIs" name="col_3"/>
+        </ns1:MiningSchema>
+        <ns1:Output>
+            <ns1:OutputField feature="predictedValue" name="internal::y"/>
+            <ns1:OutputField dataType="double" feature="transformedValue" name="y::positive" optype="continuous">
+                <ns1:Apply function="/">
+                    <ns1:Constant dataType="double">1.0</ns1:Constant>
+                    <ns1:Apply function="+">
+                        <ns1:Constant dataType="double">1.0</ns1:Constant>
+                        <ns1:Apply function="exp">
+                            <ns1:Apply function="*">
+                                <ns1:Constant dataType="double">-1.2</ns1:Constant>
+                                <ns1:FieldRef field="internal::y"/>
+                            </ns1:Apply>
+                        </ns1:Apply>
+                    </ns1:Apply>
+                </ns1:Apply>
+            </ns1:OutputField>
+            <ns1:OutputField dataType="double" feature="transformedValue" name="y::negative" optype="continuous">
+                <ns1:Apply function="-">
+                    <ns1:Constant dataType="double">1</ns1:Constant>
+                    <ns1:FieldRef field="y::positive"/>
+                </ns1:Apply>
+            </ns1:OutputField>
+            <ns1:OutputField dataType="string" feature="transformedValue" name="y" optype="categorical">
+                <ns1:Discretize field="internal::y">
+                    <ns1:DiscretizeBin binValue="negative">
+                        <ns1:Interval closure="openOpen" rightMargin="0.0"/>
+                    </ns1:DiscretizeBin>
+                    <ns1:DiscretizeBin binValue="positive">
+                        <ns1:Interval closure="closedOpen" leftMargin="0.0"/>
+                    </ns1:DiscretizeBin>
+                </ns1:Discretize>
+            </ns1:OutputField>
+        </ns1:Output>
+        <ns1:Segmentation multipleModelMethod="weightedAverage">
+            <ns1:Segment weight="1.0">
+                <ns1:True/>
+                <ns1:RegressionModel algorithmName="linearRegression" functionName="regression">
+                    <ns1:MiningSchema>
+                        <ns1:MiningField invalidValueTreatment="asIs" name="col_0"/>
+                        <ns1:MiningField invalidValueTreatment="asIs" name="col_1"/>
+                        <ns1:MiningField invalidValueTreatment="asIs" name="col_2"/>
+                        <ns1:MiningField invalidValueTreatment="asIs" name="col_3"/>
+                        <ns1:MiningField name="internal::y" usageType="predicted"/>
+                    </ns1:MiningSchema>
+                    <ns1:RegressionTable intercept="0.104093891043"/>
+                </ns1:RegressionModel>
+            </ns1:Segment>
+            <ns1:Segment weight="0.1">
+                <ns1:True/>
+                <ns1:TreeModel functionName="regression" splitCharacteristic="binarySplit">
+                    <ns1:MiningSchema>
+                        <ns1:MiningField invalidValueTreatment="asIs" name="col_0"/>
+                        <ns1:MiningField invalidValueTreatment="asIs" name="col_1"/>
+                        <ns1:MiningField invalidValueTreatment="asIs" name="col_2"/>
+                        <ns1:MiningField invalidValueTreatment="asIs" name="col_3"/>
+                    </ns1:MiningSchema>
+                    <ns1:Output>
+                        <ns1:OutputField dataType="double" feature="predictedValue" name="('numeric', False, False)::y" optype="continuous"/>
+                    </ns1:Output>
+                    <ns1:Node recordCount="500.0">
+                        <ns1:True/>
+                        <ns1:Node recordCount="280.0">
+                            <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="0.155709639192"/>
+                            <ns1:Node recordCount="55.0" score="-1.01583773432">
+                                <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="-0.81821501255"/>
+                            </ns1:Node>
+                            <ns1:Node recordCount="225.0" score="-0.0775430096314">
+                                <ns1:True/>
+                            </ns1:Node>
+                        </ns1:Node>
+                        <ns1:Node recordCount="220.0">
+                            <ns1:True/>
+                            <ns1:Node recordCount="78.0" score="0.97556099385">
+                                <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="0.628501057625"/>
+                            </ns1:Node>
+                            <ns1:Node recordCount="142.0" score="-0.0195458096157">
+                                <ns1:True/>
+                            </ns1:Node>
+                        </ns1:Node>
+                    </ns1:Node>
+                </ns1:TreeModel>
+            </ns1:Segment>
+            <ns1:Segment weight="0.1">
+                <ns1:True/>
+                <ns1:TreeModel functionName="regression" splitCharacteristic="binarySplit">
+                    <ns1:MiningSchema>
+                        <ns1:MiningField invalidValueTreatment="asIs" name="col_0"/>
+                        <ns1:MiningField invalidValueTreatment="asIs" name="col_1"/>
+                        <ns1:MiningField invalidValueTreatment="asIs" name="col_2"/>
+                        <ns1:MiningField invalidValueTreatment="asIs" name="col_3"/>
+                    </ns1:MiningSchema>
+                    <ns1:Output>
+                        <ns1:OutputField dataType="double" feature="predictedValue" name="('numeric', False, False)::y" optype="continuous"/>
+                    </ns1:Output>
+                    <ns1:Node recordCount="500.0">
+                        <ns1:True/>
+                        <ns1:Node recordCount="176.0">
+                            <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="-0.457421511412"/>
+                            <ns1:Node recordCount="152.0" score="-0.235672493053">
+                                <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="-0.541861891747"/>
+                            </ns1:Node>
+                            <ns1:Node recordCount="24.0" score="-1.28228877166">
+                                <ns1:True/>
+                            </ns1:Node>
+                        </ns1:Node>
+                        <ns1:Node recordCount="324.0">
+                            <ns1:True/>
+                            <ns1:Node recordCount="142.0" score="0.555457948501">
+                                <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="0.346540868282"/>
+                            </ns1:Node>
+                            <ns1:Node recordCount="182.0" score="-0.0667138520138">
+                                <ns1:True/>
+                            </ns1:Node>
+                        </ns1:Node>
+                    </ns1:Node>
+                </ns1:TreeModel>
+            </ns1:Segment>
+        </ns1:Segmentation>
+    </ns1:MiningModel>
+</ns1:PMML>

@@ -180,11 +180,18 @@ class JPMMLClassificationTest(JPMMLTest):
             return
 
         raw_sklearn_predictions = self.converter.estimator.predict_proba(self.x)
-        prob_outputs = [str(self.output) + '::' + str(clazz) for clazz in self.output.value_list]
+        prob_outputs = [self.output.name + '::' + str(clazz) for clazz in self.output.value_list]
         sklearn_predictions = pd.DataFrame(columns=prob_outputs)
         for index, prediction in enumerate(raw_sklearn_predictions):
             sklearn_predictions.loc[index] = list(prediction)
-        assert not np.testing.assert_almost_equal(
+
+        np.testing.assert_almost_equal(
             np.array(jpmml_predictions[list(sklearn_predictions.columns)]),
-            sklearn_predictions
+            sklearn_predictions.values,
+            err_msg='Probability mismatch'
+        )
+        np.testing.assert_equal(
+            np.array(self.output.value_list)[self.converter.estimator.predict(self.x)],
+            jpmml_predictions[self.output.name].values,
+            err_msg='Labels mismatch'
         )

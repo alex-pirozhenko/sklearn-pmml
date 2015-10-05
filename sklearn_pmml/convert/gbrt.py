@@ -64,9 +64,12 @@ class GradientBoostingConverter(ClassifierConverter):
         :return: Output element
         """
         output = pmml.Output()
+
+        # storing the raw prediction into internal::varname variable
         for f in self.context.schemas[Schema.INTERNAL]:
             output.append(pmml.OutputField(feature='predictedValue', name=Schema.INTERNAL.extract_feature_name(f)))
 
+        # setting up a logistic transformation for the positive label
         positive_category = self.context.schemas[Schema.CATEGORIES][1]
         output_field = pmml.OutputField(
             dataType=positive_category.data_type.value,
@@ -93,6 +96,7 @@ class GradientBoostingConverter(ClassifierConverter):
         output_field.append(div)
         output.append(output_field)
 
+        # probability of negative label is 1 - positive_proba
         negative_category = self.context.schemas[Schema.CATEGORIES][0]
         output_field = pmml.OutputField(
             dataType=negative_category.data_type.value,
@@ -104,6 +108,24 @@ class GradientBoostingConverter(ClassifierConverter):
         subtract.append(pmml.Constant(1, dataType=FeatureType.DOUBLE.value))
         subtract.append(pmml.FieldRef(field=Schema.CATEGORIES.extract_feature_name(positive_category)))
         output_field.append(subtract)
+        output.append(output_field)
+
+        # now we should define a label; we can look at the raw predicted output and compare it with 0
+        label = self.context.schemas[Schema.OUTPUT][0]
+        output_field = pmml.OutputField(
+            feature='transformedValue',
+            name=Schema.OUTPUT.extract_feature_name(label),
+            optype=label.optype.value,
+            dataType=label.data_type.value
+        )
+        discretize = pmml.Discretize(field=Schema.INTERNAL.extract_feature_name(label))
+        discretize_bin = pmml.DiscretizeBin(binValue=label.value_list[0])
+        discretize_bin.append(pmml.Interval(closure="openOpen", rightMargin=0))
+        discretize.append(discretize_bin)
+        discretize_bin = pmml.DiscretizeBin(binValue=label.value_list[1])
+        discretize_bin.append(pmml.Interval(closure="closedOpen", leftMargin=0))
+        discretize.append(discretize_bin)
+        output_field.append(discretize)
         output.append(output_field)
 
         return output
