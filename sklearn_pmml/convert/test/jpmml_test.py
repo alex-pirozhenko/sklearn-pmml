@@ -120,7 +120,7 @@ class JPMMLTest():
             os.path.abspath(target_file_path)
         ]))
         result = subprocess.call([
-            'mvn', 'exec:java', '-q', '-e',
+            'mvn', 'package' 'exec:java', '-q', '-e',
             '-f', find_file_or_dir('jpmml-csv-evaluator'),
             '-Dexec.mainClass=sklearn.pmml.jpmml.JPMMLCSVEvaluator',
             '-Dexec.args=' + java_args
