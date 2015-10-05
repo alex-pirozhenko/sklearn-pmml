@@ -4,3 +4,4 @@ pandas>=0.15.0
 scipy>=0.15.1
 pytest>=2.7.0
 lxml>=3.4.2
+enum34

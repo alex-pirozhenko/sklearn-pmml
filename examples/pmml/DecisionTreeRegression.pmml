@@ -1,0 +1,1256 @@
+<?xml version="1.0" ?>
+<ns1:PMML xmlns:ns1="http://www.dmg.org/PMML-4_2" version="4.2">
+    <ns1:Header/>
+    <ns1:DataDictionary>
+        <ns1:DataField dataType="integer" name="y" optype="continuous"/>
+        <ns1:DataField dataType="double" name="col_0" optype="continuous"/>
+        <ns1:DataField dataType="double" name="col_1" optype="continuous"/>
+        <ns1:DataField dataType="double" name="col_2" optype="continuous"/>
+        <ns1:DataField dataType="double" name="col_3" optype="continuous"/>
+    </ns1:DataDictionary>
+    <ns1:TransformationDictionary/>
+    <ns1:TreeModel functionName="regression" splitCharacteristic="binarySplit">
+        <ns1:MiningSchema>
+            <ns1:MiningField invalidValueTreatment="asIs" name="col_0"/>
+            <ns1:MiningField invalidValueTreatment="asIs" name="col_1"/>
+            <ns1:MiningField invalidValueTreatment="asIs" name="col_2"/>
+            <ns1:MiningField invalidValueTreatment="asIs" name="col_3"/>
+        </ns1:MiningSchema>
+        <ns1:Output>
+            <ns1:OutputField dataType="integer" feature="predictedValue" name="y" optype="continuous"/>
+        </ns1:Output>
+        <ns1:Node recordCount="500.0">
+            <ns1:True/>
+            <ns1:Node recordCount="202.0">
+                <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="-0.261430621147"/>
+                <ns1:Node recordCount="195.0">
+                    <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="1.84803807735"/>
+                    <ns1:Node recordCount="62.0">
+                        <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="-0.515709280968"/>
+                        <ns1:Node recordCount="56.0">
+                            <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="-0.3104159832"/>
+                            <ns1:Node recordCount="37.0">
+                                <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="-0.965559124947"/>
+                                <ns1:Node recordCount="33.0">
+                                    <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="-1.02813243866"/>
+                                    <ns1:Node recordCount="30.0">
+                                        <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="-0.412048459053"/>
+                                        <ns1:Node recordCount="21.0">
+                                            <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="-0.68850004673"/>
+                                            <ns1:Node recordCount="19.0">
+                                                <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="-1.11429023743"/>
+                                                <ns1:Node recordCount="17.0">
+                                                    <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="-0.756451129913"/>
+                                                    <ns1:Node recordCount="10.0">
+                                                        <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="0.410063415766"/>
+                                                        <ns1:Node recordCount="8.0">
+                                                            <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="-1.25220155716"/>
+                                                            <ns1:Node recordCount="7.0" score="1.0">
+                                                                <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="0.349797666073"/>
+                                                            </ns1:Node>
+                                                            <ns1:Node recordCount="1.0" score="2.0">
+                                                                <ns1:True/>
+                                                            </ns1:Node>
+                                                        </ns1:Node>
+                                                        <ns1:Node recordCount="2.0" score="2.0">
+                                                            <ns1:True/>
+                                                        </ns1:Node>
+                                                    </ns1:Node>
+                                                    <ns1:Node recordCount="7.0">
+                                                        <ns1:True/>
+                                                        <ns1:Node recordCount="4.0">
+                                                            <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="-1.09635782242"/>
+                                                            <ns1:Node recordCount="1.0" score="2.0">
+                                                                <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="-2.13068842888"/>
+                                                            </ns1:Node>
+                                                            <ns1:Node recordCount="3.0" score="1.0">
+                                                                <ns1:True/>
+                                                            </ns1:Node>
+                                                        </ns1:Node>
+                                                        <ns1:Node recordCount="3.0" score="0.0">
+                                                            <ns1:True/>
+                                                        </ns1:Node>
+                                                    </ns1:Node>
+                                                </ns1:Node>
+                                                <ns1:Node recordCount="2.0" score="0.0">
+                                                    <ns1:True/>
+                                                </ns1:Node>
+                                            </ns1:Node>
+                                            <ns1:Node recordCount="2.0" score="0.0">
+                                                <ns1:True/>
+                                            </ns1:Node>
+                                        </ns1:Node>
+                                        <ns1:Node recordCount="9.0">
+                                            <ns1:True/>
+                                            <ns1:Node recordCount="1.0" score="0.0">
+                                                <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="-2.79309177399"/>
+                                            </ns1:Node>
+                                            <ns1:Node recordCount="8.0">
+                                                <ns1:True/>
+                                                <ns1:Node recordCount="5.0">
+                                                    <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="0.307529121637"/>
+                                                    <ns1:Node recordCount="1.0" score="2.0">
+                                                        <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="-0.685786485672"/>
+                                                    </ns1:Node>
+                                                    <ns1:Node recordCount="4.0" score="1.0">
+                                                        <ns1:True/>
+                                                    </ns1:Node>
+                                                </ns1:Node>
+                                                <ns1:Node recordCount="3.0" score="2.0">
+                                                    <ns1:True/>
+                                                </ns1:Node>
+                                            </ns1:Node>
+                                        </ns1:Node>
+                                    </ns1:Node>
+                                    <ns1:Node recordCount="3.0" score="0.0">
+                                        <ns1:True/>
+                                    </ns1:Node>
+                                </ns1:Node>
+                                <ns1:Node recordCount="4.0" score="2.0">
+                                    <ns1:True/>
+                                </ns1:Node>
+                            </ns1:Node>
+                            <ns1:Node recordCount="19.0">
+                                <ns1:True/>
+                                <ns1:Node recordCount="16.0">
+                                    <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="-0.399435073137"/>
+                                    <ns1:Node recordCount="2.0" score="1.0">
+                                        <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="-1.81295895576"/>
+                                    </ns1:Node>
+                                    <ns1:Node recordCount="14.0">
+                                        <ns1:True/>
+                                        <ns1:Node recordCount="8.0">
+                                            <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="-0.0932206362486"/>
+                                            <ns1:Node recordCount="6.0">
+                                                <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="-0.576177597046"/>
+                                                <ns1:Node recordCount="3.0">
+                                                    <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="-0.945207476616"/>
+                                                    <ns1:Node recordCount="2.0" score="0.0">
+                                                        <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="-0.0225269198418"/>
+                                                    </ns1:Node>
+                                                    <ns1:Node recordCount="1.0" score="1.0">
+                                                        <ns1:True/>
+                                                    </ns1:Node>
+                                                </ns1:Node>
+                                                <ns1:Node recordCount="3.0" score="1.0">
+                                                    <ns1:True/>
+                                                </ns1:Node>
+                                            </ns1:Node>
+                                            <ns1:Node recordCount="2.0" score="0.0">
+                                                <ns1:True/>
+                                            </ns1:Node>
+                                        </ns1:Node>
+                                        <ns1:Node recordCount="6.0" score="0.0">
+                                            <ns1:True/>
+                                        </ns1:Node>
+                                    </ns1:Node>
+                                </ns1:Node>
+                                <ns1:Node recordCount="3.0">
+                                    <ns1:True/>
+                                    <ns1:Node recordCount="2.0" score="2.0">
+                                        <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="1.37965726852"/>
+                                    </ns1:Node>
+                                    <ns1:Node recordCount="1.0" score="0.0">
+                                        <ns1:True/>
+                                    </ns1:Node>
+                                </ns1:Node>
+                            </ns1:Node>
+                        </ns1:Node>
+                        <ns1:Node recordCount="6.0">
+                            <ns1:True/>
+                            <ns1:Node recordCount="5.0">
+                                <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="-0.275016844273"/>
+                                <ns1:Node recordCount="4.0" score="2.0">
+                                    <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="0.209128022194"/>
+                                </ns1:Node>
+                                <ns1:Node recordCount="1.0" score="1.0">
+                                    <ns1:True/>
+                                </ns1:Node>
+                            </ns1:Node>
+                            <ns1:Node recordCount="1.0" score="1.0">
+                                <ns1:True/>
+                            </ns1:Node>
+                        </ns1:Node>
+                    </ns1:Node>
+                    <ns1:Node recordCount="133.0">
+                        <ns1:True/>
+                        <ns1:Node recordCount="90.0">
+                            <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="0.817398905754"/>
+                            <ns1:Node recordCount="23.0">
+                                <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="-0.471895813942"/>
+                                <ns1:Node recordCount="3.0" score="2.0">
+                                    <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="-2.03589391708"/>
+                                </ns1:Node>
+                                <ns1:Node recordCount="20.0">
+                                    <ns1:True/>
+                                    <ns1:Node recordCount="3.0">
+                                        <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="-0.426958441734"/>
+                                        <ns1:Node recordCount="2.0" score="2.0">
+                                            <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="0.33171287179"/>
+                                        </ns1:Node>
+                                        <ns1:Node recordCount="1.0" score="1.0">
+                                            <ns1:True/>
+                                        </ns1:Node>
+                                    </ns1:Node>
+                                    <ns1:Node recordCount="17.0">
+                                        <ns1:True/>
+                                        <ns1:Node recordCount="4.0" score="0.0">
+                                            <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="0.0806639194489"/>
+                                        </ns1:Node>
+                                        <ns1:Node recordCount="13.0">
+                                            <ns1:True/>
+                                            <ns1:Node recordCount="8.0">
+                                                <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="0.107442036271"/>
+                                                <ns1:Node recordCount="1.0" score="0.0">
+                                                    <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="-0.421319752932"/>
+                                                </ns1:Node>
+                                                <ns1:Node recordCount="7.0">
+                                                    <ns1:True/>
+                                                    <ns1:Node recordCount="3.0" score="2.0">
+                                                        <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="0.564626932144"/>
+                                                    </ns1:Node>
+                                                    <ns1:Node recordCount="4.0">
+                                                        <ns1:True/>
+                                                        <ns1:Node recordCount="1.0" score="2.0">
+                                                            <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="-1.20216119289"/>
+                                                        </ns1:Node>
+                                                        <ns1:Node recordCount="3.0" score="1.0">
+                                                            <ns1:True/>
+                                                        </ns1:Node>
+                                                    </ns1:Node>
+                                                </ns1:Node>
+                                            </ns1:Node>
+                                            <ns1:Node recordCount="5.0">
+                                                <ns1:True/>
+                                                <ns1:Node recordCount="3.0" score="0.0">
+                                                    <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="0.568754851818"/>
+                                                </ns1:Node>
+                                                <ns1:Node recordCount="2.0" score="1.0">
+                                                    <ns1:True/>
+                                                </ns1:Node>
+                                            </ns1:Node>
+                                        </ns1:Node>
+                                    </ns1:Node>
+                                </ns1:Node>
+                            </ns1:Node>
+                            <ns1:Node recordCount="67.0">
+                                <ns1:True/>
+                                <ns1:Node recordCount="30.0">
+                                    <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="0.172692418098"/>
+                                    <ns1:Node recordCount="2.0" score="1.0">
+                                        <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="-2.1314060688"/>
+                                    </ns1:Node>
+                                    <ns1:Node recordCount="28.0">
+                                        <ns1:True/>
+                                        <ns1:Node recordCount="9.0">
+                                            <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="-0.517086744308"/>
+                                            <ns1:Node recordCount="7.0">
+                                                <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="0.409582287073"/>
+                                                <ns1:Node recordCount="4.0" score="2.0">
+                                                    <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="-0.76461815834"/>
+                                                </ns1:Node>
+                                                <ns1:Node recordCount="3.0">
+                                                    <ns1:True/>
+                                                    <ns1:Node recordCount="1.0" score="2.0">
+                                                        <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="-0.887925624847"/>
+                                                    </ns1:Node>
+                                                    <ns1:Node recordCount="2.0" score="1.0">
+                                                        <ns1:True/>
+                                                    </ns1:Node>
+                                                </ns1:Node>
+                                            </ns1:Node>
+                                            <ns1:Node recordCount="2.0" score="1.0">
+                                                <ns1:True/>
+                                            </ns1:Node>
+                                        </ns1:Node>
+                                        <ns1:Node recordCount="19.0">
+                                            <ns1:True/>
+                                            <ns1:Node recordCount="13.0" score="2.0">
+                                                <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="0.0285335686058"/>
+                                            </ns1:Node>
+                                            <ns1:Node recordCount="6.0">
+                                                <ns1:True/>
+                                                <ns1:Node recordCount="1.0" score="1.0">
+                                                    <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="0.0452669784427"/>
+                                                </ns1:Node>
+                                                <ns1:Node recordCount="5.0" score="2.0">
+                                                    <ns1:True/>
+                                                </ns1:Node>
+                                            </ns1:Node>
+                                        </ns1:Node>
+                                    </ns1:Node>
+                                </ns1:Node>
+                                <ns1:Node recordCount="37.0">
+                                    <ns1:True/>
+                                    <ns1:Node recordCount="20.0">
+                                        <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="0.167518630624"/>
+                                        <ns1:Node recordCount="5.0">
+                                            <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="-1.31829309464"/>
+                                            <ns1:Node recordCount="4.0" score="1.0">
+                                                <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="0.374352365732"/>
+                                            </ns1:Node>
+                                            <ns1:Node recordCount="1.0" score="0.0">
+                                                <ns1:True/>
+                                            </ns1:Node>
+                                        </ns1:Node>
+                                        <ns1:Node recordCount="15.0">
+                                            <ns1:True/>
+                                            <ns1:Node recordCount="14.0">
+                                                <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="1.91325950623"/>
+                                                <ns1:Node recordCount="11.0" score="2.0">
+                                                    <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="1.4715461731"/>
+                                                </ns1:Node>
+                                                <ns1:Node recordCount="3.0">
+                                                    <ns1:True/>
+                                                    <ns1:Node recordCount="1.0" score="1.0">
+                                                        <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="1.56623208523"/>
+                                                    </ns1:Node>
+                                                    <ns1:Node recordCount="2.0" score="2.0">
+                                                        <ns1:True/>
+                                                    </ns1:Node>
+                                                </ns1:Node>
+                                            </ns1:Node>
+                                            <ns1:Node recordCount="1.0" score="1.0">
+                                                <ns1:True/>
+                                            </ns1:Node>
+                                        </ns1:Node>
+                                    </ns1:Node>
+                                    <ns1:Node recordCount="17.0">
+                                        <ns1:True/>
+                                        <ns1:Node recordCount="12.0">
+                                            <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="0.712297618389"/>
+                                            <ns1:Node recordCount="6.0" score="1.0">
+                                                <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="-1.09562945366"/>
+                                            </ns1:Node>
+                                            <ns1:Node recordCount="6.0">
+                                                <ns1:True/>
+                                                <ns1:Node recordCount="3.0" score="0.0">
+                                                    <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="0.4885391891"/>
+                                                </ns1:Node>
+                                                <ns1:Node recordCount="3.0" score="1.0">
+                                                    <ns1:True/>
+                                                </ns1:Node>
+                                            </ns1:Node>
+                                        </ns1:Node>
+                                        <ns1:Node recordCount="5.0">
+                                            <ns1:True/>
+                                            <ns1:Node recordCount="1.0" score="1.0">
+                                                <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="-0.766536951065"/>
+                                            </ns1:Node>
+                                            <ns1:Node recordCount="4.0" score="2.0">
+                                                <ns1:True/>
+                                            </ns1:Node>
+                                        </ns1:Node>
+                                    </ns1:Node>
+                                </ns1:Node>
+                            </ns1:Node>
+                        </ns1:Node>
+                        <ns1:Node recordCount="43.0">
+                            <ns1:True/>
+                            <ns1:Node recordCount="38.0">
+                                <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="1.08719360828"/>
+                                <ns1:Node recordCount="7.0">
+                                    <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="0.949406147003"/>
+                                    <ns1:Node recordCount="2.0" score="1.0">
+                                        <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="-0.603809654713"/>
+                                    </ns1:Node>
+                                    <ns1:Node recordCount="5.0" score="0.0">
+                                        <ns1:True/>
+                                    </ns1:Node>
+                                </ns1:Node>
+                                <ns1:Node recordCount="31.0">
+                                    <ns1:True/>
+                                    <ns1:Node recordCount="10.0">
+                                        <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="-1.00488388538"/>
+                                        <ns1:Node recordCount="6.0" score="1.0">
+                                            <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="1.77494633198"/>
+                                        </ns1:Node>
+                                        <ns1:Node recordCount="4.0">
+                                            <ns1:True/>
+                                            <ns1:Node recordCount="3.0" score="2.0">
+                                                <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="2.33305311203"/>
+                                            </ns1:Node>
+                                            <ns1:Node recordCount="1.0" score="1.0">
+                                                <ns1:True/>
+                                            </ns1:Node>
+                                        </ns1:Node>
+                                    </ns1:Node>
+                                    <ns1:Node recordCount="21.0">
+                                        <ns1:True/>
+                                        <ns1:Node recordCount="10.0">
+                                            <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="1.5360481739"/>
+                                            <ns1:Node recordCount="5.0">
+                                                <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="-0.479238212109"/>
+                                                <ns1:Node recordCount="1.0" score="2.0">
+                                                    <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="-0.946069121361"/>
+                                                </ns1:Node>
+                                                <ns1:Node recordCount="4.0">
+                                                    <ns1:True/>
+                                                    <ns1:Node recordCount="2.0">
+                                                        <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="-0.68064892292"/>
+                                                        <ns1:Node recordCount="1.0" score="0.0">
+                                                            <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="-0.857309579849"/>
+                                                        </ns1:Node>
+                                                        <ns1:Node recordCount="1.0" score="1.0">
+                                                            <ns1:True/>
+                                                        </ns1:Node>
+                                                    </ns1:Node>
+                                                    <ns1:Node recordCount="2.0" score="0.0">
+                                                        <ns1:True/>
+                                                    </ns1:Node>
+                                                </ns1:Node>
+                                            </ns1:Node>
+                                            <ns1:Node recordCount="5.0">
+                                                <ns1:True/>
+                                                <ns1:Node recordCount="4.0" score="2.0">
+                                                    <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="-0.319344222546"/>
+                                                </ns1:Node>
+                                                <ns1:Node recordCount="1.0" score="1.0">
+                                                    <ns1:True/>
+                                                </ns1:Node>
+                                            </ns1:Node>
+                                        </ns1:Node>
+                                        <ns1:Node recordCount="11.0">
+                                            <ns1:True/>
+                                            <ns1:Node recordCount="2.0">
+                                                <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="-0.499220848083"/>
+                                                <ns1:Node recordCount="1.0" score="2.0">
+                                                    <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="-0.681802749634"/>
+                                                </ns1:Node>
+                                                <ns1:Node recordCount="1.0" score="0.0">
+                                                    <ns1:True/>
+                                                </ns1:Node>
+                                            </ns1:Node>
+                                            <ns1:Node recordCount="9.0">
+                                                <ns1:True/>
+                                                <ns1:Node recordCount="8.0">
+                                                    <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="2.45201301575"/>
+                                                    <ns1:Node recordCount="3.0">
+                                                        <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="-0.730724275112"/>
+                                                        <ns1:Node recordCount="2.0" score="0.0">
+                                                            <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="1.79942667484"/>
+                                                        </ns1:Node>
+                                                        <ns1:Node recordCount="1.0" score="1.0">
+                                                            <ns1:True/>
+                                                        </ns1:Node>
+                                                    </ns1:Node>
+                                                    <ns1:Node recordCount="5.0" score="0.0">
+                                                        <ns1:True/>
+                                                    </ns1:Node>
+                                                </ns1:Node>
+                                                <ns1:Node recordCount="1.0" score="1.0">
+                                                    <ns1:True/>
+                                                </ns1:Node>
+                                            </ns1:Node>
+                                        </ns1:Node>
+                                    </ns1:Node>
+                                </ns1:Node>
+                            </ns1:Node>
+                            <ns1:Node recordCount="5.0">
+                                <ns1:True/>
+                                <ns1:Node recordCount="1.0" score="1.0">
+                                    <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="-0.684428453445"/>
+                                </ns1:Node>
+                                <ns1:Node recordCount="4.0" score="2.0">
+                                    <ns1:True/>
+                                </ns1:Node>
+                            </ns1:Node>
+                        </ns1:Node>
+                    </ns1:Node>
+                </ns1:Node>
+                <ns1:Node recordCount="7.0">
+                    <ns1:True/>
+                    <ns1:Node recordCount="3.0">
+                        <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="-0.914817333221"/>
+                        <ns1:Node recordCount="2.0" score="1.0">
+                            <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="2.29343032837"/>
+                        </ns1:Node>
+                        <ns1:Node recordCount="1.0" score="0.0">
+                            <ns1:True/>
+                        </ns1:Node>
+                    </ns1:Node>
+                    <ns1:Node recordCount="4.0" score="0.0">
+                        <ns1:True/>
+                    </ns1:Node>
+                </ns1:Node>
+            </ns1:Node>
+            <ns1:Node recordCount="298.0">
+                <ns1:True/>
+                <ns1:Node recordCount="266.0">
+                    <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="1.2553768158"/>
+                    <ns1:Node recordCount="155.0">
+                        <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="0.308671563864"/>
+                        <ns1:Node recordCount="18.0">
+                            <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="-1.47402572632"/>
+                            <ns1:Node recordCount="15.0">
+                                <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="1.51404690742"/>
+                                <ns1:Node recordCount="6.0" score="2.0">
+                                    <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="-0.342633217573"/>
+                                </ns1:Node>
+                                <ns1:Node recordCount="9.0">
+                                    <ns1:True/>
+                                    <ns1:Node recordCount="2.0" score="2.0">
+                                        <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="0.18967834115"/>
+                                    </ns1:Node>
+                                    <ns1:Node recordCount="7.0">
+                                        <ns1:True/>
+                                        <ns1:Node recordCount="6.0">
+                                            <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="1.09322273731"/>
+                                            <ns1:Node recordCount="4.0" score="1.0">
+                                                <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="0.581643521786"/>
+                                            </ns1:Node>
+                                            <ns1:Node recordCount="2.0" score="0.0">
+                                                <ns1:True/>
+                                            </ns1:Node>
+                                        </ns1:Node>
+                                        <ns1:Node recordCount="1.0" score="2.0">
+                                            <ns1:True/>
+                                        </ns1:Node>
+                                    </ns1:Node>
+                                </ns1:Node>
+                            </ns1:Node>
+                            <ns1:Node recordCount="3.0">
+                                <ns1:True/>
+                                <ns1:Node recordCount="2.0" score="0.0">
+                                    <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="1.93114495277"/>
+                                </ns1:Node>
+                                <ns1:Node recordCount="1.0" score="1.0">
+                                    <ns1:True/>
+                                </ns1:Node>
+                            </ns1:Node>
+                        </ns1:Node>
+                        <ns1:Node recordCount="137.0">
+                            <ns1:True/>
+                            <ns1:Node recordCount="67.0">
+                                <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="-0.40389084816"/>
+                                <ns1:Node recordCount="65.0">
+                                    <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="-0.432241290808"/>
+                                    <ns1:Node recordCount="3.0">
+                                        <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="-1.05278038979"/>
+                                        <ns1:Node recordCount="1.0" score="1.0">
+                                            <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="-1.55923819542"/>
+                                        </ns1:Node>
+                                        <ns1:Node recordCount="2.0" score="2.0">
+                                            <ns1:True/>
+                                        </ns1:Node>
+                                    </ns1:Node>
+                                    <ns1:Node recordCount="62.0">
+                                        <ns1:True/>
+                                        <ns1:Node recordCount="16.0">
+                                            <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="-0.495171278715"/>
+                                            <ns1:Node recordCount="7.0">
+                                                <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="0.633709430695"/>
+                                                <ns1:Node recordCount="1.0" score="1.0">
+                                                    <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="-1.39047694206"/>
+                                                </ns1:Node>
+                                                <ns1:Node recordCount="6.0" score="0.0">
+                                                    <ns1:True/>
+                                                </ns1:Node>
+                                            </ns1:Node>
+                                            <ns1:Node recordCount="9.0">
+                                                <ns1:True/>
+                                                <ns1:Node recordCount="6.0">
+                                                    <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="-0.625428915024"/>
+                                                    <ns1:Node recordCount="5.0" score="1.0">
+                                                        <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="-0.57585299015"/>
+                                                    </ns1:Node>
+                                                    <ns1:Node recordCount="1.0" score="2.0">
+                                                        <ns1:True/>
+                                                    </ns1:Node>
+                                                </ns1:Node>
+                                                <ns1:Node recordCount="3.0">
+                                                    <ns1:True/>
+                                                    <ns1:Node recordCount="2.0" score="0.0">
+                                                        <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="0.307069987059"/>
+                                                    </ns1:Node>
+                                                    <ns1:Node recordCount="1.0" score="1.0">
+                                                        <ns1:True/>
+                                                    </ns1:Node>
+                                                </ns1:Node>
+                                            </ns1:Node>
+                                        </ns1:Node>
+                                        <ns1:Node recordCount="46.0">
+                                            <ns1:True/>
+                                            <ns1:Node recordCount="4.0" score="2.0">
+                                                <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="-0.372727811337"/>
+                                            </ns1:Node>
+                                            <ns1:Node recordCount="42.0">
+                                                <ns1:True/>
+                                                <ns1:Node recordCount="27.0">
+                                                    <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="0.345563739538"/>
+                                                    <ns1:Node recordCount="15.0">
+                                                        <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="-0.979352772236"/>
+                                                        <ns1:Node recordCount="10.0">
+                                                            <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="-1.19858193398"/>
+                                                            <ns1:Node recordCount="3.0" score="1.0">
+                                                                <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="-1.54157066345"/>
+                                                            </ns1:Node>
+                                                            <ns1:Node recordCount="7.0">
+                                                                <ns1:True/>
+                                                                <ns1:Node recordCount="2.0" score="1.0">
+                                                                    <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="-2.45414590836"/>
+                                                                </ns1:Node>
+                                                                <ns1:Node recordCount="5.0" score="0.0">
+                                                                    <ns1:True/>
+                                                                </ns1:Node>
+                                                            </ns1:Node>
+                                                        </ns1:Node>
+                                                        <ns1:Node recordCount="5.0">
+                                                            <ns1:True/>
+                                                            <ns1:Node recordCount="3.0">
+                                                                <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="-0.347871154547"/>
+                                                                <ns1:Node recordCount="2.0" score="1.0">
+                                                                    <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="0.639891862869"/>
+                                                                </ns1:Node>
+                                                                <ns1:Node recordCount="1.0" score="2.0">
+                                                                    <ns1:True/>
+                                                                </ns1:Node>
+                                                            </ns1:Node>
+                                                            <ns1:Node recordCount="2.0" score="2.0">
+                                                                <ns1:True/>
+                                                            </ns1:Node>
+                                                        </ns1:Node>
+                                                    </ns1:Node>
+                                                    <ns1:Node recordCount="12.0">
+                                                        <ns1:True/>
+                                                        <ns1:Node recordCount="7.0">
+                                                            <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="0.615099966526"/>
+                                                            <ns1:Node recordCount="6.0" score="0.0">
+                                                                <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="1.66405105591"/>
+                                                            </ns1:Node>
+                                                            <ns1:Node recordCount="1.0" score="1.0">
+                                                                <ns1:True/>
+                                                            </ns1:Node>
+                                                        </ns1:Node>
+                                                        <ns1:Node recordCount="5.0">
+                                                            <ns1:True/>
+                                                            <ns1:Node recordCount="1.0" score="0.0">
+                                                                <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="-1.703312397"/>
+                                                            </ns1:Node>
+                                                            <ns1:Node recordCount="4.0" score="1.0">
+                                                                <ns1:True/>
+                                                            </ns1:Node>
+                                                        </ns1:Node>
+                                                    </ns1:Node>
+                                                </ns1:Node>
+                                                <ns1:Node recordCount="15.0">
+                                                    <ns1:True/>
+                                                    <ns1:Node recordCount="4.0">
+                                                        <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="0.024501575157"/>
+                                                        <ns1:Node recordCount="3.0" score="2.0">
+                                                            <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="-0.597128272057"/>
+                                                        </ns1:Node>
+                                                        <ns1:Node recordCount="1.0" score="1.0">
+                                                            <ns1:True/>
+                                                        </ns1:Node>
+                                                    </ns1:Node>
+                                                    <ns1:Node recordCount="11.0">
+                                                        <ns1:True/>
+                                                        <ns1:Node recordCount="3.0">
+                                                            <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="0.339357376099"/>
+                                                            <ns1:Node recordCount="2.0" score="0.0">
+                                                                <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="2.22920966148"/>
+                                                            </ns1:Node>
+                                                            <ns1:Node recordCount="1.0" score="1.0">
+                                                                <ns1:True/>
+                                                            </ns1:Node>
+                                                        </ns1:Node>
+                                                        <ns1:Node recordCount="8.0">
+                                                            <ns1:True/>
+                                                            <ns1:Node recordCount="6.0">
+                                                                <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="1.88006806374"/>
+                                                                <ns1:Node recordCount="1.0" score="0.0">
+                                                                    <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="-2.27075386047"/>
+                                                                </ns1:Node>
+                                                                <ns1:Node recordCount="5.0" score="1.0">
+                                                                    <ns1:True/>
+                                                                </ns1:Node>
+                                                            </ns1:Node>
+                                                            <ns1:Node recordCount="2.0" score="2.0">
+                                                                <ns1:True/>
+                                                            </ns1:Node>
+                                                        </ns1:Node>
+                                                    </ns1:Node>
+                                                </ns1:Node>
+                                            </ns1:Node>
+                                        </ns1:Node>
+                                    </ns1:Node>
+                                </ns1:Node>
+                                <ns1:Node recordCount="2.0" score="2.0">
+                                    <ns1:True/>
+                                </ns1:Node>
+                            </ns1:Node>
+                            <ns1:Node recordCount="70.0">
+                                <ns1:True/>
+                                <ns1:Node recordCount="49.0">
+                                    <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="0.352478563786"/>
+                                    <ns1:Node recordCount="37.0">
+                                        <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="0.0695974379778"/>
+                                        <ns1:Node recordCount="36.0">
+                                            <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="0.0678408890963"/>
+                                            <ns1:Node recordCount="1.0" score="2.0">
+                                                <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="-2.26362848282"/>
+                                            </ns1:Node>
+                                            <ns1:Node recordCount="35.0">
+                                                <ns1:True/>
+                                                <ns1:Node recordCount="24.0">
+                                                    <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="0.124081946909"/>
+                                                    <ns1:Node recordCount="4.0">
+                                                        <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="-0.167942032218"/>
+                                                        <ns1:Node recordCount="3.0">
+                                                            <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="-0.194218233228"/>
+                                                            <ns1:Node recordCount="2.0" score="1.0">
+                                                                <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="0.0343803539872"/>
+                                                            </ns1:Node>
+                                                            <ns1:Node recordCount="1.0" score="0.0">
+                                                                <ns1:True/>
+                                                            </ns1:Node>
+                                                        </ns1:Node>
+                                                        <ns1:Node recordCount="1.0" score="2.0">
+                                                            <ns1:True/>
+                                                        </ns1:Node>
+                                                    </ns1:Node>
+                                                    <ns1:Node recordCount="20.0">
+                                                        <ns1:True/>
+                                                        <ns1:Node recordCount="8.0">
+                                                            <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="-0.808284163475"/>
+                                                            <ns1:Node recordCount="3.0" score="0.0">
+                                                                <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="-0.524563372135"/>
+                                                            </ns1:Node>
+                                                            <ns1:Node recordCount="5.0">
+                                                                <ns1:True/>
+                                                                <ns1:Node recordCount="4.0" score="1.0">
+                                                                    <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="1.65988278389"/>
+                                                                </ns1:Node>
+                                                                <ns1:Node recordCount="1.0" score="0.0">
+                                                                    <ns1:True/>
+                                                                </ns1:Node>
+                                                            </ns1:Node>
+                                                        </ns1:Node>
+                                                        <ns1:Node recordCount="12.0" score="0.0">
+                                                            <ns1:True/>
+                                                        </ns1:Node>
+                                                    </ns1:Node>
+                                                </ns1:Node>
+                                                <ns1:Node recordCount="11.0">
+                                                    <ns1:True/>
+                                                    <ns1:Node recordCount="1.0" score="0.0">
+                                                        <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="-1.43221211433"/>
+                                                    </ns1:Node>
+                                                    <ns1:Node recordCount="10.0">
+                                                        <ns1:True/>
+                                                        <ns1:Node recordCount="9.0">
+                                                            <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="-0.0203964337707"/>
+                                                            <ns1:Node recordCount="7.0">
+                                                                <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="-0.306760489941"/>
+                                                                <ns1:Node recordCount="4.0" score="1.0">
+                                                                    <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="0.696138679981"/>
+                                                                </ns1:Node>
+                                                                <ns1:Node recordCount="3.0">
+                                                                    <ns1:True/>
+                                                                    <ns1:Node recordCount="1.0" score="0.0">
+                                                                        <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="1.00514674187"/>
+                                                                    </ns1:Node>
+                                                                    <ns1:Node recordCount="2.0" score="1.0">
+                                                                        <ns1:True/>
+                                                                    </ns1:Node>
+                                                                </ns1:Node>
+                                                            </ns1:Node>
+                                                            <ns1:Node recordCount="2.0">
+                                                                <ns1:True/>
+                                                                <ns1:Node recordCount="1.0" score="1.0">
+                                                                    <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="0.202191829681"/>
+                                                                </ns1:Node>
+                                                                <ns1:Node recordCount="1.0" score="2.0">
+                                                                    <ns1:True/>
+                                                                </ns1:Node>
+                                                            </ns1:Node>
+                                                        </ns1:Node>
+                                                        <ns1:Node recordCount="1.0" score="0.0">
+                                                            <ns1:True/>
+                                                        </ns1:Node>
+                                                    </ns1:Node>
+                                                </ns1:Node>
+                                            </ns1:Node>
+                                        </ns1:Node>
+                                        <ns1:Node recordCount="1.0" score="2.0">
+                                            <ns1:True/>
+                                        </ns1:Node>
+                                    </ns1:Node>
+                                    <ns1:Node recordCount="12.0">
+                                        <ns1:True/>
+                                        <ns1:Node recordCount="11.0" score="0.0">
+                                            <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="0.852672338486"/>
+                                        </ns1:Node>
+                                        <ns1:Node recordCount="1.0" score="1.0">
+                                            <ns1:True/>
+                                        </ns1:Node>
+                                    </ns1:Node>
+                                </ns1:Node>
+                                <ns1:Node recordCount="21.0">
+                                    <ns1:True/>
+                                    <ns1:Node recordCount="4.0">
+                                        <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="0.490969598293"/>
+                                        <ns1:Node recordCount="3.0" score="2.0">
+                                            <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="1.26509737968"/>
+                                        </ns1:Node>
+                                        <ns1:Node recordCount="1.0" score="1.0">
+                                            <ns1:True/>
+                                        </ns1:Node>
+                                    </ns1:Node>
+                                    <ns1:Node recordCount="17.0">
+                                        <ns1:True/>
+                                        <ns1:Node recordCount="14.0">
+                                            <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="1.11556339264"/>
+                                            <ns1:Node recordCount="6.0">
+                                                <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="0.713964223862"/>
+                                                <ns1:Node recordCount="4.0" score="0.0">
+                                                    <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="-0.0689894706011"/>
+                                                </ns1:Node>
+                                                <ns1:Node recordCount="2.0" score="1.0">
+                                                    <ns1:True/>
+                                                </ns1:Node>
+                                            </ns1:Node>
+                                            <ns1:Node recordCount="8.0">
+                                                <ns1:True/>
+                                                <ns1:Node recordCount="1.0" score="0.0">
+                                                    <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="-0.448789298534"/>
+                                                </ns1:Node>
+                                                <ns1:Node recordCount="7.0">
+                                                    <ns1:True/>
+                                                    <ns1:Node recordCount="5.0">
+                                                        <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="0.0547344312072"/>
+                                                        <ns1:Node recordCount="3.0" score="2.0">
+                                                            <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="0.987886250019"/>
+                                                        </ns1:Node>
+                                                        <ns1:Node recordCount="2.0" score="1.0">
+                                                            <ns1:True/>
+                                                        </ns1:Node>
+                                                    </ns1:Node>
+                                                    <ns1:Node recordCount="2.0" score="1.0">
+                                                        <ns1:True/>
+                                                    </ns1:Node>
+                                                </ns1:Node>
+                                            </ns1:Node>
+                                        </ns1:Node>
+                                        <ns1:Node recordCount="3.0" score="0.0">
+                                            <ns1:True/>
+                                        </ns1:Node>
+                                    </ns1:Node>
+                                </ns1:Node>
+                            </ns1:Node>
+                        </ns1:Node>
+                    </ns1:Node>
+                    <ns1:Node recordCount="111.0">
+                        <ns1:True/>
+                        <ns1:Node recordCount="73.0">
+                            <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="0.588179171085"/>
+                            <ns1:Node recordCount="52.0">
+                                <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="1.06017780304"/>
+                                <ns1:Node recordCount="35.0">
+                                    <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="0.784373760223"/>
+                                    <ns1:Node recordCount="6.0">
+                                        <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="0.282474786043"/>
+                                        <ns1:Node recordCount="3.0" score="0.0">
+                                            <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="-0.459563791752"/>
+                                        </ns1:Node>
+                                        <ns1:Node recordCount="3.0">
+                                            <ns1:True/>
+                                            <ns1:Node recordCount="1.0" score="0.0">
+                                                <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="-0.0706226676702"/>
+                                            </ns1:Node>
+                                            <ns1:Node recordCount="2.0" score="1.0">
+                                                <ns1:True/>
+                                            </ns1:Node>
+                                        </ns1:Node>
+                                    </ns1:Node>
+                                    <ns1:Node recordCount="29.0">
+                                        <ns1:True/>
+                                        <ns1:Node recordCount="27.0">
+                                            <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="0.754492998123"/>
+                                            <ns1:Node recordCount="1.0" score="0.0">
+                                                <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="-1.52648425102"/>
+                                            </ns1:Node>
+                                            <ns1:Node recordCount="26.0">
+                                                <ns1:True/>
+                                                <ns1:Node recordCount="3.0" score="2.0">
+                                                    <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="0.437738776207"/>
+                                                </ns1:Node>
+                                                <ns1:Node recordCount="23.0">
+                                                    <ns1:True/>
+                                                    <ns1:Node recordCount="2.0" score="0.0">
+                                                        <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="0.4742000103"/>
+                                                    </ns1:Node>
+                                                    <ns1:Node recordCount="21.0">
+                                                        <ns1:True/>
+                                                        <ns1:Node recordCount="19.0">
+                                                            <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="1.87857556343"/>
+                                                            <ns1:Node recordCount="17.0">
+                                                                <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="0.42531645298"/>
+                                                                <ns1:Node recordCount="16.0">
+                                                                    <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="0.736793518066"/>
+                                                                    <ns1:Node recordCount="1.0" score="2.0">
+                                                                        <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="-1.36132955551"/>
+                                                                    </ns1:Node>
+                                                                    <ns1:Node recordCount="15.0">
+                                                                        <ns1:True/>
+                                                                        <ns1:Node recordCount="13.0">
+                                                                            <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="0.84940469265"/>
+                                                                            <ns1:Node recordCount="2.0">
+                                                                                <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="0.415996819735"/>
+                                                                                <ns1:Node recordCount="1.0" score="2.0">
+                                                                                    <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="-0.302694261074"/>
+                                                                                </ns1:Node>
+                                                                                <ns1:Node recordCount="1.0" score="1.0">
+                                                                                    <ns1:True/>
+                                                                                </ns1:Node>
+                                                                            </ns1:Node>
+                                                                            <ns1:Node recordCount="11.0" score="1.0">
+                                                                                <ns1:True/>
+                                                                            </ns1:Node>
+                                                                        </ns1:Node>
+                                                                        <ns1:Node recordCount="2.0">
+                                                                            <ns1:True/>
+                                                                            <ns1:Node recordCount="1.0" score="2.0">
+                                                                                <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="1.17746770382"/>
+                                                                            </ns1:Node>
+                                                                            <ns1:Node recordCount="1.0" score="1.0">
+                                                                                <ns1:True/>
+                                                                            </ns1:Node>
+                                                                        </ns1:Node>
+                                                                    </ns1:Node>
+                                                                </ns1:Node>
+                                                                <ns1:Node recordCount="1.0" score="2.0">
+                                                                    <ns1:True/>
+                                                                </ns1:Node>
+                                                            </ns1:Node>
+                                                            <ns1:Node recordCount="2.0" score="2.0">
+                                                                <ns1:True/>
+                                                            </ns1:Node>
+                                                        </ns1:Node>
+                                                        <ns1:Node recordCount="2.0" score="2.0">
+                                                            <ns1:True/>
+                                                        </ns1:Node>
+                                                    </ns1:Node>
+                                                </ns1:Node>
+                                            </ns1:Node>
+                                        </ns1:Node>
+                                        <ns1:Node recordCount="2.0" score="0.0">
+                                            <ns1:True/>
+                                        </ns1:Node>
+                                    </ns1:Node>
+                                </ns1:Node>
+                                <ns1:Node recordCount="17.0">
+                                    <ns1:True/>
+                                    <ns1:Node recordCount="12.0">
+                                        <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="0.770356714725"/>
+                                        <ns1:Node recordCount="10.0" score="2.0">
+                                            <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="1.01729977131"/>
+                                        </ns1:Node>
+                                        <ns1:Node recordCount="2.0">
+                                            <ns1:True/>
+                                            <ns1:Node recordCount="1.0" score="1.0">
+                                                <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="0.708507061005"/>
+                                            </ns1:Node>
+                                            <ns1:Node recordCount="1.0" score="2.0">
+                                                <ns1:True/>
+                                            </ns1:Node>
+                                        </ns1:Node>
+                                    </ns1:Node>
+                                    <ns1:Node recordCount="5.0">
+                                        <ns1:True/>
+                                        <ns1:Node recordCount="3.0">
+                                            <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="0.82085198164"/>
+                                            <ns1:Node recordCount="2.0" score="1.0">
+                                                <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="1.38374221325"/>
+                                            </ns1:Node>
+                                            <ns1:Node recordCount="1.0" score="2.0">
+                                                <ns1:True/>
+                                            </ns1:Node>
+                                        </ns1:Node>
+                                        <ns1:Node recordCount="2.0" score="0.0">
+                                            <ns1:True/>
+                                        </ns1:Node>
+                                    </ns1:Node>
+                                </ns1:Node>
+                            </ns1:Node>
+                            <ns1:Node recordCount="21.0">
+                                <ns1:True/>
+                                <ns1:Node recordCount="7.0">
+                                    <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="1.21863865852"/>
+                                    <ns1:Node recordCount="1.0" score="1.0">
+                                        <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="1.07116675377"/>
+                                    </ns1:Node>
+                                    <ns1:Node recordCount="6.0">
+                                        <ns1:True/>
+                                        <ns1:Node recordCount="2.0">
+                                            <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="0.207697540522"/>
+                                            <ns1:Node recordCount="1.0" score="1.0">
+                                                <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="1.16794025898"/>
+                                            </ns1:Node>
+                                            <ns1:Node recordCount="1.0" score="0.0">
+                                                <ns1:True/>
+                                            </ns1:Node>
+                                        </ns1:Node>
+                                        <ns1:Node recordCount="4.0" score="0.0">
+                                            <ns1:True/>
+                                        </ns1:Node>
+                                    </ns1:Node>
+                                </ns1:Node>
+                                <ns1:Node recordCount="14.0">
+                                    <ns1:True/>
+                                    <ns1:Node recordCount="4.0" score="2.0">
+                                        <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="-0.941139698029"/>
+                                    </ns1:Node>
+                                    <ns1:Node recordCount="10.0">
+                                        <ns1:True/>
+                                        <ns1:Node recordCount="1.0" score="2.0">
+                                            <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="-0.117394290864"/>
+                                        </ns1:Node>
+                                        <ns1:Node recordCount="9.0">
+                                            <ns1:True/>
+                                            <ns1:Node recordCount="2.0" score="0.0">
+                                                <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="0.335132330656"/>
+                                            </ns1:Node>
+                                            <ns1:Node recordCount="7.0">
+                                                <ns1:True/>
+                                                <ns1:Node recordCount="6.0">
+                                                    <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="1.54234719276"/>
+                                                    <ns1:Node recordCount="4.0" score="1.0">
+                                                        <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="0.583711862564"/>
+                                                    </ns1:Node>
+                                                    <ns1:Node recordCount="2.0">
+                                                        <ns1:True/>
+                                                        <ns1:Node recordCount="1.0" score="0.0">
+                                                            <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="0.826062142849"/>
+                                                        </ns1:Node>
+                                                        <ns1:Node recordCount="1.0" score="1.0">
+                                                            <ns1:True/>
+                                                        </ns1:Node>
+                                                    </ns1:Node>
+                                                </ns1:Node>
+                                                <ns1:Node recordCount="1.0" score="0.0">
+                                                    <ns1:True/>
+                                                </ns1:Node>
+                                            </ns1:Node>
+                                        </ns1:Node>
+                                    </ns1:Node>
+                                </ns1:Node>
+                            </ns1:Node>
+                        </ns1:Node>
+                        <ns1:Node recordCount="38.0">
+                            <ns1:True/>
+                            <ns1:Node recordCount="8.0">
+                                <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="0.743154525757"/>
+                                <ns1:Node recordCount="7.0">
+                                    <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="1.44603049755"/>
+                                    <ns1:Node recordCount="2.0">
+                                        <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="0.636095166206"/>
+                                        <ns1:Node recordCount="1.0" score="0.0">
+                                            <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="-0.751208901405"/>
+                                        </ns1:Node>
+                                        <ns1:Node recordCount="1.0" score="1.0">
+                                            <ns1:True/>
+                                        </ns1:Node>
+                                    </ns1:Node>
+                                    <ns1:Node recordCount="5.0" score="0.0">
+                                        <ns1:True/>
+                                    </ns1:Node>
+                                </ns1:Node>
+                                <ns1:Node recordCount="1.0" score="2.0">
+                                    <ns1:True/>
+                                </ns1:Node>
+                            </ns1:Node>
+                            <ns1:Node recordCount="30.0">
+                                <ns1:True/>
+                                <ns1:Node recordCount="26.0">
+                                    <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="1.60058391094"/>
+                                    <ns1:Node recordCount="6.0">
+                                        <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="-1.13934159279"/>
+                                        <ns1:Node recordCount="4.0">
+                                            <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="-1.5557448864"/>
+                                            <ns1:Node recordCount="2.0">
+                                                <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="0.678086340427"/>
+                                                <ns1:Node recordCount="1.0" score="1.0">
+                                                    <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="-0.150913640857"/>
+                                                </ns1:Node>
+                                                <ns1:Node recordCount="1.0" score="0.0">
+                                                    <ns1:True/>
+                                                </ns1:Node>
+                                            </ns1:Node>
+                                            <ns1:Node recordCount="2.0" score="1.0">
+                                                <ns1:True/>
+                                            </ns1:Node>
+                                        </ns1:Node>
+                                        <ns1:Node recordCount="2.0" score="0.0">
+                                            <ns1:True/>
+                                        </ns1:Node>
+                                    </ns1:Node>
+                                    <ns1:Node recordCount="20.0">
+                                        <ns1:True/>
+                                        <ns1:Node recordCount="15.0">
+                                            <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="1.01761221886"/>
+                                            <ns1:Node recordCount="3.0">
+                                                <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="-0.951703429222"/>
+                                                <ns1:Node recordCount="1.0" score="1.0">
+                                                    <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="-1.08378219604"/>
+                                                </ns1:Node>
+                                                <ns1:Node recordCount="2.0" score="2.0">
+                                                    <ns1:True/>
+                                                </ns1:Node>
+                                            </ns1:Node>
+                                            <ns1:Node recordCount="12.0">
+                                                <ns1:True/>
+                                                <ns1:Node recordCount="2.0" score="0.0">
+                                                    <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="0.265864282846"/>
+                                                </ns1:Node>
+                                                <ns1:Node recordCount="10.0">
+                                                    <ns1:True/>
+                                                    <ns1:Node recordCount="8.0">
+                                                        <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="1.38179004192"/>
+                                                        <ns1:Node recordCount="4.0">
+                                                            <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="1.1224899292"/>
+                                                            <ns1:Node recordCount="1.0" score="1.0">
+                                                                <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="1.02121663094"/>
+                                                            </ns1:Node>
+                                                            <ns1:Node recordCount="3.0" score="0.0">
+                                                                <ns1:True/>
+                                                            </ns1:Node>
+                                                        </ns1:Node>
+                                                        <ns1:Node recordCount="4.0" score="1.0">
+                                                            <ns1:True/>
+                                                        </ns1:Node>
+                                                    </ns1:Node>
+                                                    <ns1:Node recordCount="2.0">
+                                                        <ns1:True/>
+                                                        <ns1:Node recordCount="1.0" score="1.0">
+                                                            <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="0.483509004116"/>
+                                                        </ns1:Node>
+                                                        <ns1:Node recordCount="1.0" score="2.0">
+                                                            <ns1:True/>
+                                                        </ns1:Node>
+                                                    </ns1:Node>
+                                                </ns1:Node>
+                                            </ns1:Node>
+                                        </ns1:Node>
+                                        <ns1:Node recordCount="5.0">
+                                            <ns1:True/>
+                                            <ns1:Node recordCount="3.0" score="2.0">
+                                                <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="1.19180452824"/>
+                                            </ns1:Node>
+                                            <ns1:Node recordCount="2.0" score="1.0">
+                                                <ns1:True/>
+                                            </ns1:Node>
+                                        </ns1:Node>
+                                    </ns1:Node>
+                                </ns1:Node>
+                                <ns1:Node recordCount="4.0">
+                                    <ns1:True/>
+                                    <ns1:Node recordCount="1.0" score="1.0">
+                                        <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="0.43673145771"/>
+                                    </ns1:Node>
+                                    <ns1:Node recordCount="3.0" score="0.0">
+                                        <ns1:True/>
+                                    </ns1:Node>
+                                </ns1:Node>
+                            </ns1:Node>
+                        </ns1:Node>
+                    </ns1:Node>
+                </ns1:Node>
+                <ns1:Node recordCount="32.0">
+                    <ns1:True/>
+                    <ns1:Node recordCount="12.0">
+                        <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="1.51424646378"/>
+                        <ns1:Node recordCount="10.0">
+                            <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="1.26997327805"/>
+                            <ns1:Node recordCount="1.0" score="1.0">
+                                <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="-1.3665920496"/>
+                            </ns1:Node>
+                            <ns1:Node recordCount="9.0">
+                                <ns1:True/>
+                                <ns1:Node recordCount="4.0">
+                                    <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="1.33888733387"/>
+                                    <ns1:Node recordCount="2.0" score="2.0">
+                                        <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="1.3136575222"/>
+                                    </ns1:Node>
+                                    <ns1:Node recordCount="2.0" score="1.0">
+                                        <ns1:True/>
+                                    </ns1:Node>
+                                </ns1:Node>
+                                <ns1:Node recordCount="5.0" score="2.0">
+                                    <ns1:True/>
+                                </ns1:Node>
+                            </ns1:Node>
+                        </ns1:Node>
+                        <ns1:Node recordCount="2.0">
+                            <ns1:True/>
+                            <ns1:Node recordCount="1.0" score="0.0">
+                                <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="1.6827403307"/>
+                            </ns1:Node>
+                            <ns1:Node recordCount="1.0" score="2.0">
+                                <ns1:True/>
+                            </ns1:Node>
+                        </ns1:Node>
+                    </ns1:Node>
+                    <ns1:Node recordCount="20.0">
+                        <ns1:True/>
+                        <ns1:Node recordCount="7.0">
+                            <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="1.85017621517"/>
+                            <ns1:Node recordCount="2.0" score="1.0">
+                                <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="1.58874678612"/>
+                            </ns1:Node>
+                            <ns1:Node recordCount="5.0">
+                                <ns1:True/>
+                                <ns1:Node recordCount="2.0" score="0.0">
+                                    <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="1.67728686333"/>
+                                </ns1:Node>
+                                <ns1:Node recordCount="3.0">
+                                    <ns1:True/>
+                                    <ns1:Node recordCount="2.0" score="1.0">
+                                        <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="-0.175021722913"/>
+                                    </ns1:Node>
+                                    <ns1:Node recordCount="1.0" score="0.0">
+                                        <ns1:True/>
+                                    </ns1:Node>
+                                </ns1:Node>
+                            </ns1:Node>
+                        </ns1:Node>
+                        <ns1:Node recordCount="13.0">
+                            <ns1:True/>
+                            <ns1:Node recordCount="7.0">
+                                <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="2.06933426857"/>
+                                <ns1:Node recordCount="5.0">
+                                    <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="0.741447031498"/>
+                                    <ns1:Node recordCount="2.0" score="2.0">
+                                        <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="1.91326642036"/>
+                                    </ns1:Node>
+                                    <ns1:Node recordCount="3.0" score="1.0">
+                                        <ns1:True/>
+                                    </ns1:Node>
+                                </ns1:Node>
+                                <ns1:Node recordCount="2.0" score="2.0">
+                                    <ns1:True/>
+                                </ns1:Node>
+                            </ns1:Node>
+                            <ns1:Node recordCount="6.0">
+                                <ns1:True/>
+                                <ns1:Node recordCount="3.0">
+                                    <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="-0.480090975761"/>
+                                    <ns1:Node recordCount="2.0" score="0.0">
+                                        <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="2.56281757355"/>
+                                    </ns1:Node>
+                                    <ns1:Node recordCount="1.0" score="1.0">
+                                        <ns1:True/>
+                                    </ns1:Node>
+                                </ns1:Node>
+                                <ns1:Node recordCount="3.0" score="1.0">
+                                    <ns1:True/>
+                                </ns1:Node>
+                            </ns1:Node>
+                        </ns1:Node>
+                    </ns1:Node>
+                </ns1:Node>
+            </ns1:Node>
+        </ns1:Node>
+    </ns1:TreeModel>
+</ns1:PMML>
