@@ -105,7 +105,7 @@ class JPMMLTest():
         else:
             xml = self.converter.pmml().toDOM().toprettyxml()
 
-        pmml_hash = hashlib.md5(xml).hexdigest()
+        pmml_hash = hashlib.md5(xml.encode('utf-8')).hexdigest()
         pmml_file_path = os.path.join(TEST_DIR, pmml_hash + '.pmml')
         with open(pmml_file_path, 'w') as pmml_file:
             pmml_file.write(xml)
