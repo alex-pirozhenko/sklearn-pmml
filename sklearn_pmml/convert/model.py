@@ -334,6 +334,43 @@ class ClassifierConverter(EstimatorConverter):
         for f in context.schemas[Schema.OUTPUT]:
             assert isinstance(f, CategoricalFeature), 'Only categorical outputs are supported for classification task'
 
+        # create hidden variables for each categorical output
+        internal_schema = list(filter(lambda x: isinstance(x, CategoricalFeature), self.context.schemas[Schema.OUTPUT]))
+        self.context.schemas[Schema.INTERNAL] = internal_schema
+
+    def output(self):
+        """
+        Output section of PMML contains all model outputs.
+        Classification tree output contains output variable as a label,
+        and <variable>::<value> as a probability of a value for a variable
+        :return: pmml.Output
+        """
+        output = pmml.Output()
+
+        # the response variables
+        for feature in self.context.schemas[Schema.OUTPUT]:
+            output_field = pmml.OutputField(
+                name=Schema.OUTPUT.extract_feature_name(feature),
+                feature='predictedValue',
+                optype=feature.optype.value,
+                dataType=feature.data_type.value
+            )
+            output.append(output_field)
+
+        # the probabilities for categories; should only be populated for classification jobs
+        for feature in self.context.schemas[Schema.CATEGORIES]:
+            output_field = pmml.OutputField(
+                name=Schema.CATEGORIES.extract_feature_name(feature),
+                optype=feature.optype.value,
+                dataType=feature.data_type.value,
+                feature='probability',
+                targetField=Schema.INTERNAL.extract_feature_name(feature.namespace),
+                value_=feature.name
+            )
+            output.append(output_field)
+
+        return output
+
 
 class RegressionConverter(EstimatorConverter):
     def __init__(self, estimator, context):

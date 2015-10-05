@@ -25,8 +25,8 @@ class Feature(object):
         :type namespace: str
         :type invalid_value_treatment: InvalidValueTreatment
         """
-        self._name = name
-        self._namespace = namespace
+        self._name = str(name)
+        self._namespace = str(namespace)
         self._invalid_value_treatment = invalid_value_treatment
 
     @property

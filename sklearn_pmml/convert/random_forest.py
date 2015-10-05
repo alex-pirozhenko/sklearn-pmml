@@ -1,17 +1,19 @@
+from sklearn_pmml.convert import CategoricalFeature
+
 __author__ = 'evancox'
 
 
 from sklearn.ensemble import RandomForestClassifier
-from sklearn_pmml.convert.model import EstimatorConverter, Schema, ModelMode
+from sklearn_pmml.convert.model import Schema, ModelMode, ClassifierConverter
 from sklearn_pmml.convert.tree import DecisionTreeConverter
 from sklearn_pmml.convert.utils import estimator_to_converter
 
 import sklearn_pmml.pmml as pmml
 
 
-class RandomForestClassifierConverter(EstimatorConverter):
+class RandomForestClassifierConverter(ClassifierConverter):
     def __init__(self, estimator, context):
-        super(RandomForestClassifierConverter, self).__init__(estimator, context, ModelMode.CLASSIFICATION)
+        super(RandomForestClassifierConverter, self).__init__(estimator, context)
         assert isinstance(estimator, RandomForestClassifier), \
             'This converter can only process RandomForestClassifier instances'
         assert len(context.schemas[Schema.OUTPUT]) == 1, 'Only one-label classification is supported'
@@ -24,7 +26,6 @@ class RandomForestClassifierConverter(EstimatorConverter):
         if verification_data is not None:
             mining_model.append(self.model_verification(verification_data))
         return mining_model
-
 
     def segmentation(self):
         """

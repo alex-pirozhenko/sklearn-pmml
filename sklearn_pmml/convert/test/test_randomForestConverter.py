@@ -1,6 +1,8 @@
+from sklearn_pmml.convert import StringCategoricalFeature, IntegerCategoricalFeature
+
 __author__ = 'evancox'
 
-from jpmml_test import JPMMLClassificationTest, JPMMLTest
+from jpmml_test import JPMMLClassificationTest, JPMMLTest, TARGET_NAME
 from unittest import TestCase
 
 from sklearn.ensemble import RandomForestClassifier
@@ -26,5 +28,9 @@ class TestRandomForestClassifierParity(TestCase, JPMMLClassificationTest):
             estimator=self.model,
             context=self.ctx
         )
+
+    @property
+    def output(self):
+        return IntegerCategoricalFeature(name=TARGET_NAME, value_list=[0, 1, 2])
 
 

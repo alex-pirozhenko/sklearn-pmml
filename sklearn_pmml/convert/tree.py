@@ -6,7 +6,7 @@ from sklearn.tree._tree import Tree, TREE_LEAF
 import numpy as np
 
 from sklearn_pmml.convert.model import EstimatorConverter, ModelMode, Schema
-from sklearn_pmml.convert.features import Feature, CategoricalFeature, NumericFeature, FeatureOpType, FeatureType
+from sklearn_pmml.convert.features import Feature, CategoricalFeature, NumericFeature
 import sklearn_pmml.pmml as pmml
 from sklearn_pmml.convert.utils import estimator_to_converter
 
@@ -40,6 +40,8 @@ class DecisionTreeConverter(EstimatorConverter):
                 estimator.tree_.value.shape[1], len(self.context.schemas[Schema.OUTPUT]))
 
         # create hidden variables for each categorical output
+        # TODO: this code is copied from the ClassifierConverter. To make things right, we need an abstract tree
+        # TODO: converter and subclasses for classifier and regression converters
         internal_schema = list(filter(lambda x: isinstance(x, CategoricalFeature), self.context.schemas[Schema.OUTPUT]))
         self.context.schemas[Schema.INTERNAL] = internal_schema
 
