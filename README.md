@@ -2,6 +2,8 @@
 [![Gitter](https://badges.gitter.im/alex-pirozhenko/sklearn-pmml.svg)](https://gitter.im/alex-pirozhenko/sklearn-pmml)
 
 # sklearn-pmml
+
+[![Join the chat at https://gitter.im/alex-pirozhenko/sklearn-pmml](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/alex-pirozhenko/sklearn-pmml?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 A library that allows serialization of SciKit-Learn estimators into PMML
 
 # Installation
