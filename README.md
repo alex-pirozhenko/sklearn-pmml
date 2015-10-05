@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/alex-pirozhenko/sklearn-pmml.svg)](https://travis-ci.org/alex-pirozhenko/sklearn-pmml)
+[![Gitter](https://badges.gitter.im/alex-pirozhenko/sklearn-pmml.svg)](https://gitter.im/alex-pirozhenko/sklearn-pmml)
 
 # sklearn-pmml
 A library that allows serialization of SciKit-Learn estimators into PMML
