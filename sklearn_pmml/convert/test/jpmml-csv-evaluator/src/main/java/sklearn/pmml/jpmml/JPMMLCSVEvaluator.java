@@ -103,8 +103,10 @@ public class JPMMLCSVEvaluator
         int index = 0;
         for (FieldName fieldName : predictions.get(0).keySet())
         {
-            outputFields.add(fieldName);
-            header[index++] = fieldName.toString();
+            if (fieldName != null) {
+                outputFields.add(fieldName);
+                header[index++] = fieldName.toString();
+            }
         }
 
         try (final CsvMapWriter csvMapWriter = new CsvMapWriter(new FileWriter(outputFile), CsvPreference.STANDARD_PREFERENCE))
@@ -115,7 +117,9 @@ public class JPMMLCSVEvaluator
                 final Map<String, Object> row = Maps.newHashMapWithExpectedSize(prediction.size());
                 for (Map.Entry<FieldName, ?> keyValue : prediction.entrySet())
                 {
-                    row.put(keyValue.getKey().toString(), keyValue.getValue());
+                    if (keyValue.getKey() != null) {
+                        row.put(keyValue.getKey().toString(), keyValue.getValue());
+                    }
                 }
                 csvMapWriter.write(row, header);
             }
@@ -134,7 +138,7 @@ public class JPMMLCSVEvaluator
         try
         {
             Evaluator evaluator = evaluatorFromXml(new FileInputStream(pmmlFile));
-//            evaluator.verify();
+            evaluator.verify();
             final List<Map<FieldName, ?>> predictions = getPredictions(evaluator, csvFeaturesFile);
             writePredictions(evaluator, predictions, outputFile);
             logger.info(String.format("Wrote %d predictions from %s to %s", predictions.size(), csvFeaturesFile, outputFile));
