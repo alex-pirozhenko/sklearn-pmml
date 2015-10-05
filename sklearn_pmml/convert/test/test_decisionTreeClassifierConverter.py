@@ -1,5 +1,5 @@
 import numpy as np
-from jpmml_test import JPMMLClassificationTest, JPMMLRegressionTest, TARGET_NAME, TARGET
+from sklearn_pmml.convert.test.jpmml_test import JPMMLClassificationTest, JPMMLRegressionTest, TARGET_NAME, TARGET
 
 from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
 
