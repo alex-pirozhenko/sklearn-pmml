@@ -1,6 +1,7 @@
 import pytest
 from sklearn.tree import DecisionTreeClassifier
 from sklearn_pmml import EstimatorConverter, TransformationContext, pmml
+from sklearn_pmml.convert import Schema, ModelMode
 from sklearn_pmml.convert.features import *
 
 test_cases = [
@@ -35,13 +36,13 @@ test_cases = [
 def test_transformation_dictionary(input_fields, derived_fields, output_fields, expected_data_dictionary, expected_transformation_dictionary):
     converter = EstimatorConverter(
         DecisionTreeClassifier(),
-        context=TransformationContext(
-            input=input_fields,
-            derived=derived_fields,
-            model=input_fields+derived_fields,
-            output=output_fields
-        ),
-        mode=EstimatorConverter.MODE_CLASSIFICATION
+        context=TransformationContext({
+            Schema.INPUT: input_fields,
+            Schema.DERIVED: derived_fields,
+            Schema.MODEL: input_fields + derived_fields,
+            Schema.OUTPUT: output_fields
+        }),
+        mode=ModelMode.CLASSIFICATION
     )
 
     assert converter.data_dictionary().toxml() == expected_data_dictionary, 'Error in data dictionary generation'

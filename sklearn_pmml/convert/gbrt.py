@@ -33,6 +33,8 @@ class GradientBoostingConverter(ClassifierConverter):
 
     NOTE: at the moment only binary one-label classification is supported.
     """
+    SCHEMAS_IN_MINING_MODEL = {Schema.INPUT}
+
     def __init__(self, estimator, context):
         super(GradientBoostingConverter, self).__init__(estimator, context)
 
@@ -62,33 +64,47 @@ class GradientBoostingConverter(ClassifierConverter):
         :return: Output element
         """
         output = pmml.Output()
-        output.append(pmml.OutputField(feature='predictedValue', name='predictedValue'))
-        output_feature = self.context.schemas[Schema.OUTPUT][0]
-        if isinstance(output_feature, CategoricalFeature):
-            for output_value in output_feature.value_list:
-                output_field = pmml.OutputField(
-                    dataType='double', feature='transformedValue',
-                    name='output::' + output_feature.full_name + '::' + str(output_value),
-                    optype=output_feature.optype.value
-                )
-                neg = pmml.Apply(function='*')
-                neg.append(pmml.FieldRef(field='predictedValue'))
-                neg.append(pmml.Constant(
-                    # there is no notion of weighted sum in segment aggregation, so we used weighted average,
-                    # and now the result should be multiplied by total weight
-                    -(1 + self.estimator.n_estimators * self.estimator.learning_rate),
-                    dataType='double'
-                ))
-                exp = pmml.Apply(function='exp')
-                exp.append(neg)
-                plus = pmml.Apply(function='+')
-                plus.append(pmml.Constant(1.0, dataType='double'))
-                plus.append(exp)
-                div = pmml.Apply(function='/')
-                div.append(pmml.Constant(1.0, dataType='double'))
-                div.append(plus)
-                output_field.append(div)
-                output.append(output_field)
+        for f in self.context.schemas[Schema.INTERNAL]:
+            output.append(pmml.OutputField(feature='predictedValue', name=Schema.INTERNAL.extract_feature_name(f)))
+
+        positive_category = self.context.schemas[Schema.CATEGORIES][1]
+        output_field = pmml.OutputField(
+            dataType=positive_category.data_type.value,
+            feature='transformedValue',
+            name=Schema.CATEGORIES.extract_feature_name(positive_category),
+            optype=positive_category.optype.value
+        )
+        neg = pmml.Apply(function='*')
+        neg.append(pmml.FieldRef(field=Schema.INTERNAL.extract_feature_name(positive_category.namespace)))
+        neg.append(pmml.Constant(
+            # there is no notion of weighted sum in segment aggregation, so we used weighted average,
+            # and now the result should be multiplied by total weight
+            -(1 + self.estimator.n_estimators * self.estimator.learning_rate),
+            dataType=FeatureType.DOUBLE.value
+        ))
+        exp = pmml.Apply(function='exp')
+        exp.append(neg)
+        plus = pmml.Apply(function='+')
+        plus.append(pmml.Constant(1.0, dataType=FeatureType.DOUBLE.value))
+        plus.append(exp)
+        div = pmml.Apply(function='/')
+        div.append(pmml.Constant(1.0, dataType=FeatureType.DOUBLE.value))
+        div.append(plus)
+        output_field.append(div)
+        output.append(output_field)
+
+        negative_category = self.context.schemas[Schema.CATEGORIES][0]
+        output_field = pmml.OutputField(
+            dataType=negative_category.data_type.value,
+            feature='transformedValue',
+            name=Schema.CATEGORIES.extract_feature_name(negative_category),
+            optype=negative_category.optype.value
+        )
+        subtract = pmml.Apply(function='-')
+        subtract.append(pmml.Constant(1, dataType=FeatureType.DOUBLE.value))
+        subtract.append(pmml.FieldRef(field=Schema.CATEGORIES.extract_feature_name(positive_category)))
+        output_field.append(subtract)
+        output.append(output_field)
 
         return output
 
@@ -101,11 +117,12 @@ class GradientBoostingConverter(ClassifierConverter):
         # in output transformation
         segmentation = pmml.Segmentation(multipleModelMethod="weightedAverage")
 
-        # build the context for the nested regression models by replacing output categorical feature with the continuous numeric feature
+        # build the context for the nested regression models by replacing output categorical feature
+        # with the continuous numeric feature
         regression_context = copy(self.context)
         regression_context.schemas[Schema.OUTPUT] = [RealNumericFeature(
             name=self.context.schemas[Schema.OUTPUT][0].name,
-            namespace=Schema.NUMERIC
+            namespace=Schema.NUMERIC.value
         )]
 
         # first, transform initial estimator

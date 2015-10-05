@@ -180,8 +180,7 @@ class JPMMLClassificationTest(JPMMLTest):
             return
 
         raw_sklearn_predictions = self.converter.estimator.predict_proba(self.x)
-        prob_outputs = [str(self.output) + '::' + str(clazz) for clazz in
-                        self.converter.estimator.classes_]
+        prob_outputs = [str(self.output) + '::' + str(clazz) for clazz in self.output.value_list]
         sklearn_predictions = pd.DataFrame(columns=prob_outputs)
         for index, prediction in enumerate(raw_sklearn_predictions):
             sklearn_predictions.loc[index] = list(prediction)
