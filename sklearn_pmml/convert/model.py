@@ -146,7 +146,7 @@ class EstimatorConverter(object):
         except the ones defined as Derived Features
         """
         dd = pmml.DataDictionary()
-        for schema, fields in self.context.schemas.items():
+        for schema, fields in sorted(self.context.schemas.items(), key=lambda x: x[0].name):
             assert isinstance(schema, Schema)
             if schema.eligible_for_data_dictionary:
                 for f in fields:
