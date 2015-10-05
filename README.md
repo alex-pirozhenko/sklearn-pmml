@@ -3,6 +3,12 @@
 # sklearn-pmml
 A library that allows serialization of SciKit-Learn estimators into PMML
 
+# Installation
+The easiest way is to use pip:
+```
+pip install sklearn-pmml
+```
+
 # Supported models
 - DecisionTreeClassifier
 - DecisionTreeRegressor
