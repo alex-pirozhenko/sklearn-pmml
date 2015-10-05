@@ -3,7 +3,7 @@ from unittest import TestCase
 from sklearn.ensemble import GradientBoostingClassifier
 import numpy as np
 
-from sklearn_pmml.convert.test.jpmml_test import JPMMLClassificationTest, JPMMLTest, _TARGET_NAME
+from sklearn_pmml.convert.test.jpmml_test import JPMMLClassificationTest, JPMMLTest, TARGET_NAME
 from sklearn_pmml.convert import TransformationContext
 from sklearn_pmml.convert.features import *
 from sklearn_pmml.convert.gbrt import GradientBoostingConverter

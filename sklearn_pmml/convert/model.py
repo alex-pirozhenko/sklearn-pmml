@@ -1,4 +1,6 @@
 from collections import defaultdict
+from enum import Enum
+from sklearn.base import ClassifierMixin, RegressorMixin, BaseEstimator
 from sklearn_pmml import pmml
 from sklearn_pmml.convert.utils import pmml_row
 from sklearn_pmml.convert.features import *
@@ -11,73 +13,168 @@ class TransformationContext(object):
     Context holder object
     """
 
-    def __init__(self, **schemas):
+    def __init__(self, schemas=None):
+        """
+        :type schemas: dict[Schema, list[Feature]] | None
+        """
+        if schemas is None:
+            schemas = {}
         self.schemas = schemas
+
+
+class ModelMode(Enum):
+    CLASSIFICATION = 'classification'
+    REGRESSION = 'regression'
+
+
+class Schema(Enum):
+    INPUT = ('input', True, True)
+    """
+    Schema used to define input variables. Short names allowed
+    """
+
+    OUTPUT = ('output', True, True)
+    """
+    Schema used to define output variables. Short names allowed. For the categorical variables the continuous
+    probability variables will be automatically created as <feature_name>::<feature_value>
+    """
+
+    DERIVED = ('derived', False, False)
+    """
+    Schema used to define derived features. Short names not allowed due to potential overlap with input variables.
+    """
+
+    NUMERIC = ('numeric', False, False)
+    """
+    Schema used to encode categorical features as numbers. Short names not allowed due to their overlap with
+    input variables
+    """
+
+    MODEL = ('model', True, False)
+    """
+    Schema used to define features fed into the sklearn estimator.
+    Short names allowed because these variables are not going into PMML.
+    """
+
+    INTERNAL = ('internal', False, True)
+    """
+    This schema may be used by complex converters to hide the variables used for internal needs
+    (e.g. the raw predictions of GBRT)
+    """
+
+    CATEGORIES = ('categories', True, False)
+    """
+    This schema is used to extend categorical outputs with probabilities of categories
+    """
+
+    def __init__(self, name, short_names_allowed, data_dict_elibigle):
+        self._name = name
+        self._short_names_allowed = short_names_allowed
+        self._data_dict_elibigle = data_dict_elibigle
+
+    @property
+    def namespace(self):
+        """
+        The namespace corresponding to the schema
+        """
+        return self._name
+
+    @property
+    def short_names_allowed(self):
+        """
+        The schema allows usage of short names instead of fully-qualified names
+        """
+        return self._short_names_allowed
+
+    @property
+    def eligible_for_data_dictionary(self):
+        """
+        The variables defined in the schema should appear in the DataDictionary
+        """
+        return self._data_dict_elibigle
+
+    def extract_feature_name(self, f):
+        """
+        Extract the printed name of the feature.
+        :param f: feature to work with
+        :type f: Feature|str
+        """
+        if self.short_names_allowed:
+            if isinstance(f, str):
+                return f
+            else:
+                return f.full_name
+        else:
+            return "{}::{}".format(self.namespace, f if isinstance(f, str) else f.full_name)
 
 
 class EstimatorConverter(object):
     """
     A new base class for the estimator converters
     """
-    PMML_VERSION = "4.2"
-
-    MODE_CLASSIFICATION = 'classification'
-    MODE_REGRESSION = 'regression'
-    all_modes = {
-        MODE_CLASSIFICATION,
-        MODE_REGRESSION
-    }
-
-    SCHEMA_INPUT = 'input'
-    SCHEMA_DERIVED = 'derived'
-
-    SCHEMA_NUMERIC = 'numeric'
-    SCHEMA_MODEL = 'model'
-
-    SCHEMA_OUTPUT = 'output'
-
     EPSILON = 0.00001
+    SCHEMAS_IN_MINING_MODEL = {Schema.INPUT, Schema.INTERNAL}
 
     def __init__(self, estimator, context, mode):
-        self.model_function_name = mode
+        self.model_function = mode
         self.estimator = estimator
         self.context = context
 
-        assert mode in self.all_modes, 'Unknown mode {}. Supported modes: {}'.format(mode, self.all_modes)
-        assert not any(isinstance(_, DerivedFeature) for _ in context.schemas[self.SCHEMA_INPUT]), \
+        assert not any(isinstance(_, DerivedFeature) for _ in context.schemas[Schema.INPUT]), \
             'Input schema represents the input fields only'
-        assert all(isinstance(_, DerivedFeature) for _ in context.schemas[self.SCHEMA_DERIVED]), \
+        assert all(isinstance(_, DerivedFeature) for _ in context.schemas[Schema.DERIVED]), \
             'Derived schema represents the set of automatically generated fields'
-        assert not any(isinstance(_, DerivedFeature) for _ in context.schemas[self.SCHEMA_OUTPUT]), \
+        assert not any(isinstance(_, DerivedFeature) for _ in context.schemas[Schema.OUTPUT]), \
             'Only regular features allowed in output schema; use Output transformation if you want to transform values'
+
+        # create a new schema for categories probabilities
+        categories = []
+        for feature in context.schemas[Schema.OUTPUT]:
+            if isinstance(feature, CategoricalFeature):
+                for value in feature.value_list:
+                    categories.append(RealNumericFeature(
+                        name=value,
+                        namespace=feature.name
+                    ))
+        context.schemas[Schema.CATEGORIES] = categories
 
     def data_dictionary(self):
         """
-        Build a data dictionary and return a DataDictionary element
+        Build a data dictionary and return a DataDictionary element.
+
+        DataDictionary contains feature types for all variables used in the PMML,
+        except the ones defined as Derived Features
         """
         dd = pmml.DataDictionary()
-        for f in self.context.schemas[self.SCHEMA_INPUT] + self.context.schemas[self.SCHEMA_OUTPUT]:
-            data_field = pmml.DataField(dataType=f.data_type, name=f.name, optype=f.optype)
-            dd.DataField.append(data_field)
-            if isinstance(f, CategoricalFeature):
-                for v in f.value_list:
-                    data_field.append(pmml.Value(value_=v))
+        for schema, fields in self.context.schemas.items():
+            assert isinstance(schema, Schema)
+            if schema.eligible_for_data_dictionary:
+                for f in fields:
+                    data_field = pmml.DataField(
+                        dataType=f.data_type.value,
+                        name=schema.extract_feature_name(f),
+                        optype=f.optype.value)
+                    dd.DataField.append(data_field)
+                    if isinstance(f, CategoricalFeature):
+                        for v in f.value_list:
+                            data_field.append(pmml.Value(value_=v))
         return dd
 
     def output(self):
+        """
+        Output section of PMML contains all model outputs.
+        :return: pmml.Output
+        """
         output = pmml.Output()
-        for output_label in self.context.schemas[self.SCHEMA_OUTPUT]:
-            output_field = pmml.OutputField(name='output::' + str(output_label), feature='predictedValue')
+
+        # the response variables
+        for feature in self.context.schemas[Schema.OUTPUT]:
+            output_field = pmml.OutputField(
+                name=Schema.OUTPUT.extract_feature_name(feature),
+                feature='predictedValue'
+            )
             output.append(output_field)
-            if isinstance(output_label, CategoricalFeature):
-                for output_value in output_label.value_list:
-                    output_field = pmml.OutputField(name='output::' + str(output_label) + '::' + str(output_value),
-                                                    optype='continuous',
-                                                    dataType='double',
-                                                    feature='probability',
-                                                    targetField=str(output_label),
-                                                    value_=str(output_value))
-                    output.append(output_field)
+
         return output
 
     def transformation_dictionary(self):
@@ -87,16 +184,16 @@ class EstimatorConverter(object):
         td = pmml.TransformationDictionary()
         # define a schema with all variables available for a model
         encoded_schema = []
-        self.context.schemas[self.SCHEMA_NUMERIC] = encoded_schema
+        self.context.schemas[Schema.NUMERIC] = encoded_schema
         idx = {}
 
         # First, populate transformation dictionary for _all_ derived fields, because they can be requested later
-        for f in self.context.schemas[self.SCHEMA_DERIVED]:
+        for f in self.context.schemas[Schema.DERIVED]:
             ef = RealNumericFeature(name=f.name)
             df = pmml.DerivedField(
                 name=ef.full_name,
-                optype=ef.optype,
-                dataType=ef.data_type
+                optype=ef.optype.value,
+                dataType=ef.data_type.value
             )
             df.append(f.transformation)
             td.append(df)
@@ -104,17 +201,17 @@ class EstimatorConverter(object):
             idx[f.name] = ef
 
         # second, define the numeric transformations for the categorical variables
-        for f in self.context.schemas[self.SCHEMA_INPUT]:
+        for f in self.context.schemas[Schema.INPUT]:
             assert f.name not in idx, 'Duplicate field definition: {}'.format(f.name)
             if isinstance(f, CategoricalFeature):
-                ef = RealNumericFeature(name=f.name, namespace=self.SCHEMA_NUMERIC)
+                ef = RealNumericFeature(name=f.name, namespace=Schema.NUMERIC.namespace)
                 # create a record in transformation dictionary with mapping from raw values into numbers
                 df = pmml.DerivedField(
                     name=ef.full_name,
-                    optype=ef.optype,
-                    dataType=ef.data_type
+                    optype=ef.optype.value,
+                    dataType=ef.data_type.value
                 )
-                mv = pmml.MapValues(outputColumn='output', dataType=ef.data_type)
+                mv = pmml.MapValues(outputColumn='output', dataType=ef.data_type.value)
                 mv.append(pmml.FieldColumnPair(field=f.full_name, column='input'))
                 it = pmml.InlineTable()
                 for i, v in enumerate(f.value_list):
@@ -125,7 +222,7 @@ class EstimatorConverter(object):
                 idx[f.name] = f
 
         # now we can build a mirror of model schema into the numeric schema
-        self.context.schemas[self.SCHEMA_NUMERIC] = [idx[f.name] for f in self.context.schemas[self.SCHEMA_MODEL]]
+        self.context.schemas[Schema.NUMERIC] = [idx[f.name] for f in self.context.schemas[Schema.MODEL]]
 
         return td
 
@@ -142,7 +239,7 @@ class EstimatorConverter(object):
         :return: ModelVerification element
         """
         verification_data = pd.DataFrame(verification_data)
-        fields = self.context.schemas[self.SCHEMA_INPUT] + self.context.schemas[self.SCHEMA_OUTPUT]
+        fields = self.context.schemas[Schema.INPUT] + self.context.schemas[Schema.OUTPUT]
         assert len(verification_data) > 0, 'Verification data can not be empty'
         assert len(verification_data.columns) == len(fields), \
             'Number of fields in validation data should match to input and output schema fields'
@@ -178,18 +275,25 @@ class EstimatorConverter(object):
 
     def mining_schema(self):
         """
-        Build a mining schema and return MiningSchema element
+        Mining schema contains the model input features.
+        NOTE: In order to avoid duplicates, I've decided to remove output features from MiningSchema
+        NOTE: We don't need to specify any DERIVED/NUMERIC fields here, because PMML interpreter will create them
+        in a lazy manner.
         """
         ms = pmml.MiningSchema()
 
-        for f in sorted(self.context.schemas[self.SCHEMA_INPUT], key=lambda _: _.full_name):
-            ms.append(pmml.MiningField(invalidValueTreatment=f.invalid_value_treatment, name=f.full_name))
+        if Schema.INPUT in self.SCHEMAS_IN_MINING_MODEL:
+            for f in sorted(self.context.schemas[Schema.INPUT], key=lambda _: _.full_name):
+                ms.append(pmml.MiningField(invalidValueTreatment=f.invalid_value_treatment.value, name=f.full_name))
 
-        for f in sorted(self.context.schemas[self.SCHEMA_OUTPUT], key=lambda _: _.full_name):
-            ms.append(pmml.MiningField(
-                name=f.full_name,
-                usageType="predicted"
-            ))
+        for s in [Schema.OUTPUT, Schema.INTERNAL]:
+            if s in self.SCHEMAS_IN_MINING_MODEL:
+                for f in self.context.schemas.get(s, []):
+                    ms.append(pmml.MiningField(
+                        name=s.extract_feature_name(f),
+                        usageType="predicted"
+                    ))
+
         return ms
 
     def header(self):
@@ -209,3 +313,28 @@ class EstimatorConverter(object):
         p.append(self.transformation_dictionary())
         p.append(self.model(verification_data))
         return p
+
+
+class ClassifierConverter(EstimatorConverter):
+    """
+    Base class for classifier converters.
+    It is required that the output schema contains only categorical features.
+    The serializer will output result labels as output::feature_name and probabilities for each value of result feature
+    as output::feature_name::feature_value.
+    """
+    def __init__(self, estimator, context):
+        """
+        :param estimator: Estimator to convert
+        :type estimator: BaseEstimator
+        :param context: context to work with
+        :type context: TransformationContext
+        """
+        super(ClassifierConverter, self).__init__(estimator, context, ModelMode.CLASSIFICATION)
+        assert isinstance(estimator, ClassifierMixin), 'Classifier converter should only be applied to the classification models'
+        for f in context.schemas[Schema.OUTPUT]:
+            assert isinstance(f, CategoricalFeature), 'Only categorical outputs are supported for classification task'
+
+
+class RegressionConverter(EstimatorConverter):
+    def __init__(self, estimator, context):
+        super(RegressionConverter, self).__init__(estimator, context, ModelMode.REGRESSION)

@@ -1,23 +1,53 @@
+from enum import Enum
 import pandas as pd
 
-class Feature(object):
-    INVALID_TREATMENT_AS_IS = 'asIs'
 
-    def __init__(self, name, namespace='', invalid_value_treatment=INVALID_TREATMENT_AS_IS):
+class FeatureOpType(Enum):
+    CATEGORICAL = 'categorical'
+    CONTINUOUS = 'continuous'
+
+
+class FeatureType(Enum):
+    DOUBLE = 'double'
+    INT = 'integer'
+    STRING = 'string'
+
+
+class InvalidValueTreatment(Enum):
+    AS_IS = 'asIs'
+
+
+class Feature(object):
+    def __init__(self, name, namespace='', invalid_value_treatment=InvalidValueTreatment.AS_IS):
+        """
+        Create a new feature
+        :type name: str
+        :type namespace: str
+        :type invalid_value_treatment: InvalidValueTreatment
+        """
         self._name = name
         self._namespace = namespace
         self._invalid_value_treatment = invalid_value_treatment
 
     @property
     def name(self):
+        """
+        :rtype: str
+        """
         return self._name
 
     @property
     def namespace(self):
+        """
+        :rtype: str
+        """
         return self._namespace
 
     @property
     def full_name(self):
+        """
+        :rtype: str
+        """
         if self._namespace:
             return '{}::{}'.format(self._namespace, self.name)
         else:
@@ -29,10 +59,16 @@ class Feature(object):
 
     @property
     def optype(self):
+        """
+        :rtype: FeatureOpType
+        """
         raise NotImplementedError()
 
     @property
     def data_type(self):
+        """
+        :rtype: FeatureType
+        """
         raise NotImplementedError()
 
     def from_number(self, value):
@@ -48,7 +84,7 @@ class Feature(object):
 class NumericFeature(Feature):
     @property
     def optype(self):
-        return "continuous"
+        return FeatureOpType.CONTINUOUS
 
     def from_number(self, value):
         return float(value)
@@ -57,7 +93,7 @@ class NumericFeature(Feature):
 class RealNumericFeature(NumericFeature):
     @property
     def data_type(self):
-        return "double"
+        return FeatureType.DOUBLE
 
 
 class IntegerNumericFeature(NumericFeature):
@@ -66,7 +102,7 @@ class IntegerNumericFeature(NumericFeature):
 
     @property
     def data_type(self):
-        return "integer"
+        return FeatureType.INT
 
 
 class CategoricalFeature(Feature):
@@ -75,13 +111,13 @@ class CategoricalFeature(Feature):
     dataType. The corresponding derived field will have a double data type and will be defined as a MapValues PMML
     element.
     """
-    def __init__(self, name, value_list, namespace='', invalid_value_treatment=Feature.INVALID_TREATMENT_AS_IS):
+    def __init__(self, name, value_list, namespace='', invalid_value_treatment=InvalidValueTreatment.AS_IS):
         super(CategoricalFeature, self).__init__(name, namespace, invalid_value_treatment)
         self.value_list = value_list
 
     @property
     def optype(self):
-        return "categorical"
+        return FeatureOpType.CATEGORICAL
 
     def from_number(self, value):
         assert value >= 0, 'Negative numbers can not be used as categorical indexes'
@@ -92,13 +128,13 @@ class CategoricalFeature(Feature):
 class IntegerCategoricalFeature(CategoricalFeature):
     @property
     def data_type(self):
-        return "integer"
+        return FeatureType.INT
 
 
 class StringCategoricalFeature(CategoricalFeature):
     @property
     def data_type(self):
-        return "string"
+        return FeatureType.STRING
 
 
 class DerivedFeature(NumericFeature):
@@ -127,7 +163,6 @@ class DerivedFeature(NumericFeature):
         self.feature = feature
         self.transformation = transformation
         self.function = function
-
 
     def from_number(self, value):
         return self.feature.from_number(value)

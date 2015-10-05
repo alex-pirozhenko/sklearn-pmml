@@ -8,6 +8,7 @@ from sklearn.ensemble import RandomForestClassifier
 
 from sklearn_pmml.convert.random_forest import RandomForestClassifierConverter
 
+
 class TestRandomForestClassifierParity(TestCase, JPMMLClassificationTest):
 
     @classmethod
@@ -15,9 +16,11 @@ class TestRandomForestClassifierParity(TestCase, JPMMLClassificationTest):
         if JPMMLTest.can_run():
             JPMMLTest.init_jpmml()
 
-
     def setUp(self):
-        self.model = RandomForestClassifier()
+        self.model = RandomForestClassifier(
+            n_estimators=3,
+            max_depth=3
+        )
         self.init_data()
         self.converter = RandomForestClassifierConverter(
             estimator=self.model,

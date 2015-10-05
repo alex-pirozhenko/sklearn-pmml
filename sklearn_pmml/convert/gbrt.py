@@ -4,22 +4,22 @@ from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.ensemble.gradient_boosting import LogOddsEstimator
 
 from sklearn_pmml.convert.features import *
-from sklearn_pmml.convert.model import EstimatorConverter
+from sklearn_pmml.convert.model import EstimatorConverter, ClassifierConverter, ModelMode, RegressionConverter, Schema
 from sklearn_pmml.convert.tree import DecisionTreeConverter
 import sklearn_pmml.pmml as pmml
 from sklearn_pmml.convert.utils import estimator_to_converter, find_converter
 
 
-class LogOddsEstimatorConverter(EstimatorConverter):
+class LogOddsEstimatorConverter(RegressionConverter):
     REGRESSION_LINEAR = "linearRegression"
 
     def __init__(self, estimator, context):
-        super(LogOddsEstimatorConverter, self).__init__(estimator, context, self.MODE_REGRESSION)
+        super(LogOddsEstimatorConverter, self).__init__(estimator, context)
 
         assert isinstance(estimator, LogOddsEstimator), 'This converter can only process LogOddsEstimator instances'
 
     def model(self, verification_data=None):
-        rm = pmml.RegressionModel(functionName=self.model_function_name, algorithmName=self.REGRESSION_LINEAR)
+        rm = pmml.RegressionModel(functionName=self.model_function.value, algorithmName=self.REGRESSION_LINEAR)
         rm.append(self.mining_schema())
         rm.append(pmml.RegressionTable(intercept=self.estimator.prior))
         if verification_data is not None:
@@ -27,21 +27,27 @@ class LogOddsEstimatorConverter(EstimatorConverter):
         return rm
 
 
-class GradientBoostingConverter(EstimatorConverter):
+class GradientBoostingConverter(ClassifierConverter):
+    """
+    Converter for GradientBoostingClassifier model.
+
+    NOTE: at the moment only binary one-label classification is supported.
+    """
     def __init__(self, estimator, context):
-        super(GradientBoostingConverter, self).__init__(estimator, context, self.MODE_CLASSIFICATION)
+        super(GradientBoostingConverter, self).__init__(estimator, context)
 
         assert isinstance(estimator, GradientBoostingClassifier), \
             'This converter can only process GradientBoostingClassifier instances'
-        assert len(context.schemas[self.SCHEMA_OUTPUT]) == 1, 'Only one-label classification is supported'
+        assert len(context.schemas[Schema.OUTPUT]) == 1, 'Only one-label classification is supported'
         assert not estimator.loss_.is_multi_class, 'Only one-label classification is supported'
-        # assert context.schemas[self.SCHEMA_OUTPUT][0].data_type == 'double', 'PMML version only returns probabilities'
-        assert context.schemas[self.SCHEMA_OUTPUT][0].optype == 'categorical', 'Classification output must be categorical'
+        assert context.schemas[Schema.OUTPUT][0].optype == FeatureOpType.CATEGORICAL, \
+            'Classification output must be categorical'
+        assert len(context.schemas[Schema.OUTPUT][0].value_list) == 2, 'Only binary classifier is supported'
         assert find_converter(estimator.init_) is not None, 'Can not find a converter for {}'.format(estimator.init_)
 
     def model(self, verification_data=None):
-        # gradient boosting is always a regression model in PMML terms:
-        mining_model = pmml.MiningModel(functionName=self.MODE_REGRESSION)
+        # The ensemble of regression models can only be a regression model. Surprise!
+        mining_model = pmml.MiningModel(functionName=ModelMode.REGRESSION.value)
         mining_model.append(self.mining_schema())
         mining_model.append(self.output_transformation())
         mining_model.append(self.segmentation())
@@ -57,13 +63,13 @@ class GradientBoostingConverter(EstimatorConverter):
         """
         output = pmml.Output()
         output.append(pmml.OutputField(feature='predictedValue', name='predictedValue'))
-        output_feature = self.context.schemas[self.SCHEMA_OUTPUT][0]
+        output_feature = self.context.schemas[Schema.OUTPUT][0]
         if isinstance(output_feature, CategoricalFeature):
             for output_value in output_feature.value_list:
                 output_field = pmml.OutputField(
                     dataType='double', feature='transformedValue',
                     name='output::' + output_feature.full_name + '::' + str(output_value),
-                    optype=output_feature.optype
+                    optype=output_feature.optype.value
                 )
                 neg = pmml.Apply(function='*')
                 neg.append(pmml.FieldRef(field='predictedValue'))
@@ -97,9 +103,9 @@ class GradientBoostingConverter(EstimatorConverter):
 
         # build the context for the nested regression models by replacing output categorical feature with the continuous numeric feature
         regression_context = copy(self.context)
-        regression_context.schemas[self.SCHEMA_OUTPUT] = [RealNumericFeature(
-            name=self.context.schemas[self.SCHEMA_OUTPUT][0].name,
-            namespace=self.SCHEMA_NUMERIC
+        regression_context.schemas[Schema.OUTPUT] = [RealNumericFeature(
+            name=self.context.schemas[Schema.OUTPUT][0].name,
+            namespace=Schema.NUMERIC
         )]
 
         # first, transform initial estimator
@@ -111,7 +117,7 @@ class GradientBoostingConverter(EstimatorConverter):
         for est in self.estimator.estimators_[:, 0]:
             s = pmml.Segment(weight=self.estimator.learning_rate)
             s.append(pmml.True_())
-            s.append(DecisionTreeConverter(est, regression_context, self.MODE_REGRESSION)._model())
+            s.append(DecisionTreeConverter(est, regression_context, ModelMode.REGRESSION)._model())
             segmentation.append(s)
 
         return segmentation

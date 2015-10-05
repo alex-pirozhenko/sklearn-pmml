@@ -1,11 +1,9 @@
-from unittest import TestCase
-
 import numpy as np
-from jpmml_test import JPMMLClassificationTest, JPMMLRegressionTest
+from jpmml_test import JPMMLClassificationTest, JPMMLRegressionTest, TARGET_NAME, TARGET
 
 from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
 
-from sklearn_pmml.convert import TransformationContext, pmml_row
+from sklearn_pmml.convert import TransformationContext, pmml_row, ModelMode, Schema
 from sklearn_pmml.convert.features import *
 from sklearn_pmml.convert.tree import DecisionTreeConverter
 from sklearn_pmml import pmml
@@ -23,23 +21,31 @@ class TestDecisionTreeClassifierConverter(TestCase):
             [1, 0],
             [1, 1],
         ], [0, 1, 1, 1])
-        self.ctx = TransformationContext(
-            input=[IntegerNumericFeature('x1'), StringCategoricalFeature('x2', ['zero', 'one'])],
-            model=[IntegerNumericFeature('x1'), StringCategoricalFeature('x2', ['zero', 'one'])],
-            derived=[],
-            output=[IntegerCategoricalFeature('output', ['neg', 'pos'])]
-        )
+        self.ctx = TransformationContext({
+            Schema.INPUT: [
+                IntegerNumericFeature('x1'),
+                StringCategoricalFeature('x2', ['zero', 'one'])
+            ],
+            Schema.MODEL: [
+                IntegerNumericFeature('x1'),
+                StringCategoricalFeature('x2', ['zero', 'one'])
+            ],
+            Schema.DERIVED: [],
+            Schema.OUTPUT: [
+                IntegerNumericFeature('output')
+            ]
+        })
         self.converter = DecisionTreeConverter(
             estimator=self.est,
             context=self.ctx,
-            mode=DecisionTreeConverter.MODE_CLASSIFICATION
+            mode=ModelMode.CLASSIFICATION
         )
 
     def test_transform(self):
         p = self.converter.pmml()
         tm = p.TreeModel[0]
         assert tm.MiningSchema is not None, 'Missing mining schema'
-        assert len(tm.MiningSchema.MiningField) == 3, 'Wrong number of mining fields'
+        assert len(tm.MiningSchema.MiningField) == 2, 'Wrong number of mining fields'
         assert tm.Node is not None, 'Missing root node'
         assert tm.Node.recordCount == 4
         assert tm.Node.True_ is not None, 'Root condition should always be True'
@@ -61,28 +67,30 @@ class TestDecisionTreeClassifierConverter(TestCase):
         it.append(pmml_row(x1=1, x2='zero', output=0))
         it.append(pmml_row(x1=1, x2='one', output=1))
         mapping.append(it)
-        self.ctx = TransformationContext(
-            input=[
+        self.ctx = TransformationContext({
+            Schema.INPUT: [
                 IntegerNumericFeature('x1'),
-                StringCategoricalFeature('x2', ['zero', 'one']),
+                StringCategoricalFeature('x2', ['zero', 'one'])
             ],
-            derived=[
+            Schema.DERIVED: [
                 DerivedFeature(
                     feature=RealNumericFeature(name='x3'),
                     transformation=mapping
                 )
             ],
-            model=[
+            Schema.MODEL: [
                 IntegerNumericFeature('x1'),
                 StringCategoricalFeature('x2', ['zero', 'one']),
                 RealNumericFeature(name='x3')
             ],
-            output=[IntegerCategoricalFeature('output', ['neg', 'pos'])]
-        )
+            Schema.OUTPUT: [
+                IntegerCategoricalFeature('output', ['neg', 'pos'])
+            ]
+        })
         self.converter = DecisionTreeConverter(
             estimator=self.est,
             context=self.ctx,
-            mode=DecisionTreeConverter.MODE_CLASSIFICATION
+            mode=ModelMode.CLASSIFICATION
         )
         self.converter.pmml().toxml()
 
@@ -97,23 +105,31 @@ class TestDecisionTreeRegressorConverter(TestCase):
             [1, 0],
             [1, 1],
         ], [0, 1, 1, 1])
-        self.ctx = TransformationContext(
-            input=[IntegerNumericFeature('x1'), StringCategoricalFeature('x2', ['zero', 'one'])],
-            model=[IntegerNumericFeature('x1'), StringCategoricalFeature('x2', ['zero', 'one'])],
-            derived=[],
-            output=[IntegerNumericFeature('output')]
-        )
+        self.ctx = TransformationContext({
+            Schema.INPUT: [
+                IntegerNumericFeature('x1'),
+                StringCategoricalFeature('x2', ['zero', 'one'])
+            ],
+            Schema.MODEL: [
+                IntegerNumericFeature('x1'),
+                StringCategoricalFeature('x2', ['zero', 'one'])
+            ],
+            Schema.DERIVED: [],
+            Schema.OUTPUT: [
+                IntegerNumericFeature('output')
+            ]
+        })
         self.converter = DecisionTreeConverter(
             estimator=self.est,
             context=self.ctx,
-            mode=DecisionTreeConverter.MODE_REGRESSION
+            mode=ModelMode.REGRESSION
         )
 
     def test_transform(self):
         p = self.converter.pmml()
         tm = p.TreeModel[0]
         assert tm.MiningSchema is not None, 'Missing mining schema'
-        assert len(tm.MiningSchema.MiningField) == 3, 'Wrong number of mining fields'
+        assert len(tm.MiningSchema.MiningField) == 2, 'Wrong number of mining fields'
         assert tm.Node is not None, 'Missing root node'
         assert tm.Node.recordCount == 4
         assert tm.Node.True_ is not None, 'Root condition should always be True'
@@ -122,13 +138,18 @@ class TestDecisionTreeRegressorConverter(TestCase):
 class TestDecisionTreeClassificationJPMMLParity(TestCase, JPMMLClassificationTest):
 
     def setUp(self):
-        self.model = DecisionTreeClassifier()
+        self.model = DecisionTreeClassifier(max_depth=2)
         self.init_data()
         self.converter = DecisionTreeConverter(
             estimator=self.model,
             context=self.ctx,
-            mode=DecisionTreeConverter.MODE_CLASSIFICATION
+            mode=ModelMode.CLASSIFICATION
         )
+
+    @property
+    def output(self):
+        return IntegerCategoricalFeature(name=TARGET_NAME, value_list=TARGET)
+
 
 class TestDecisionTreeRegressionJPMMLParity(TestCase, JPMMLRegressionTest):
 
@@ -138,5 +159,5 @@ class TestDecisionTreeRegressionJPMMLParity(TestCase, JPMMLRegressionTest):
         self.converter = DecisionTreeConverter(
             estimator=self.model,
             context=self.ctx,
-            mode=DecisionTreeConverter.MODE_REGRESSION
+            mode=ModelMode.REGRESSION
         )
