@@ -1,0 +1,350 @@
+<?xml version="1.0" ?>
+<ns1:PMML xmlns:ns1="http://www.dmg.org/PMML-4_2" version="4.2">
+    <ns1:Header/>
+    <ns1:DataDictionary>
+        <ns1:DataField dataType="integer" name="internal::y" optype="categorical">
+            <ns1:Value value="0"/>
+            <ns1:Value value="1"/>
+            <ns1:Value value="2"/>
+        </ns1:DataField>
+        <ns1:DataField dataType="integer" name="y" optype="categorical">
+            <ns1:Value value="0"/>
+            <ns1:Value value="1"/>
+            <ns1:Value value="2"/>
+        </ns1:DataField>
+        <ns1:DataField dataType="double" name="col_0" optype="continuous"/>
+        <ns1:DataField dataType="double" name="col_1" optype="continuous"/>
+        <ns1:DataField dataType="double" name="col_2" optype="continuous"/>
+        <ns1:DataField dataType="double" name="col_3" optype="continuous"/>
+    </ns1:DataDictionary>
+    <ns1:TransformationDictionary/>
+    <ns1:MiningModel functionName="classification">
+        <ns1:MiningSchema>
+            <ns1:MiningField invalidValueTreatment="asIs" name="col_0"/>
+            <ns1:MiningField invalidValueTreatment="asIs" name="col_1"/>
+            <ns1:MiningField invalidValueTreatment="asIs" name="col_2"/>
+            <ns1:MiningField invalidValueTreatment="asIs" name="col_3"/>
+            <ns1:MiningField name="internal::y" usageType="predicted"/>
+        </ns1:MiningSchema>
+        <ns1:Output>
+            <ns1:OutputField dataType="integer" feature="predictedValue" name="y" optype="categorical"/>
+            <ns1:OutputField dataType="double" feature="probability" name="y::0" optype="continuous" targetField="internal::y" value="0"/>
+            <ns1:OutputField dataType="double" feature="probability" name="y::1" optype="continuous" targetField="internal::y" value="1"/>
+            <ns1:OutputField dataType="double" feature="probability" name="y::2" optype="continuous" targetField="internal::y" value="2"/>
+        </ns1:Output>
+        <ns1:Segmentation multipleModelMethod="weightedAverage">
+            <ns1:Segment id="0">
+                <ns1:True/>
+                <ns1:TreeModel functionName="classification" splitCharacteristic="binarySplit">
+                    <ns1:MiningSchema>
+                        <ns1:MiningField invalidValueTreatment="asIs" name="col_0"/>
+                        <ns1:MiningField invalidValueTreatment="asIs" name="col_1"/>
+                        <ns1:MiningField invalidValueTreatment="asIs" name="col_2"/>
+                        <ns1:MiningField invalidValueTreatment="asIs" name="col_3"/>
+                        <ns1:MiningField name="internal::y" usageType="predicted"/>
+                    </ns1:MiningSchema>
+                    <ns1:Output>
+                        <ns1:OutputField dataType="integer" feature="predictedValue" name="y" optype="categorical"/>
+                        <ns1:OutputField dataType="double" feature="probability" name="y::0" optype="continuous" targetField="internal::y" value="0"/>
+                        <ns1:OutputField dataType="double" feature="probability" name="y::1" optype="continuous" targetField="internal::y" value="1"/>
+                        <ns1:OutputField dataType="double" feature="probability" name="y::2" optype="continuous" targetField="internal::y" value="2"/>
+                    </ns1:Output>
+                    <ns1:Node recordCount="321.0" score="0">
+                        <ns1:True/>
+                        <ns1:ScoreDistribution confidence="0.535825545171" recordCount="172.0" value="0"/>
+                        <ns1:ScoreDistribution confidence="0.489096573209" recordCount="157.0" value="1"/>
+                        <ns1:ScoreDistribution confidence="0.532710280374" recordCount="171.0" value="2"/>
+                        <ns1:Node recordCount="11.0" score="1">
+                            <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="-2.0007185936"/>
+                            <ns1:ScoreDistribution confidence="0.0" recordCount="0.0" value="0"/>
+                            <ns1:ScoreDistribution confidence="1.27272727273" recordCount="14.0" value="1"/>
+                            <ns1:ScoreDistribution confidence="0.181818181818" recordCount="2.0" value="2"/>
+                            <ns1:Node recordCount="9.0" score="1">
+                                <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="0.638656973839"/>
+                                <ns1:ScoreDistribution confidence="0.0" recordCount="0.0" value="0"/>
+                                <ns1:ScoreDistribution confidence="1.0" recordCount="12.0" value="1"/>
+                                <ns1:ScoreDistribution confidence="0.0" recordCount="0.0" value="2"/>
+                            </ns1:Node>
+                            <ns1:Node recordCount="2.0" score="1">
+                                <ns1:True/>
+                                <ns1:ScoreDistribution confidence="0.0" recordCount="0.0" value="0"/>
+                                <ns1:ScoreDistribution confidence="1.0" recordCount="2.0" value="1"/>
+                                <ns1:ScoreDistribution confidence="1.0" recordCount="2.0" value="2"/>
+                                <ns1:Node recordCount="1.0" score="1">
+                                    <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="-0.382083296776"/>
+                                    <ns1:ScoreDistribution confidence="0.0" recordCount="0.0" value="0"/>
+                                    <ns1:ScoreDistribution confidence="1.0" recordCount="2.0" value="1"/>
+                                    <ns1:ScoreDistribution confidence="0.0" recordCount="0.0" value="2"/>
+                                </ns1:Node>
+                                <ns1:Node recordCount="1.0" score="2">
+                                    <ns1:True/>
+                                    <ns1:ScoreDistribution confidence="0.0" recordCount="0.0" value="0"/>
+                                    <ns1:ScoreDistribution confidence="0.0" recordCount="0.0" value="1"/>
+                                    <ns1:ScoreDistribution confidence="1.0" recordCount="2.0" value="2"/>
+                                </ns1:Node>
+                            </ns1:Node>
+                        </ns1:Node>
+                        <ns1:Node recordCount="310.0" score="0">
+                            <ns1:True/>
+                            <ns1:ScoreDistribution confidence="0.554838709677" recordCount="172.0" value="0"/>
+                            <ns1:ScoreDistribution confidence="0.461290322581" recordCount="143.0" value="1"/>
+                            <ns1:ScoreDistribution confidence="0.545161290323" recordCount="169.0" value="2"/>
+                            <ns1:Node recordCount="252.0" score="2">
+                                <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="0.997073411942"/>
+                                <ns1:ScoreDistribution confidence="0.575396825397" recordCount="145.0" value="0"/>
+                                <ns1:ScoreDistribution confidence="0.428571428571" recordCount="108.0" value="1"/>
+                                <ns1:ScoreDistribution confidence="0.587301587302" recordCount="148.0" value="2"/>
+                                <ns1:Node recordCount="217.0" score="2">
+                                    <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="1.07116675377"/>
+                                    <ns1:ScoreDistribution confidence="0.31884057971" recordCount="110.0" value="0"/>
+                                    <ns1:ScoreDistribution confidence="0.28115942029" recordCount="97.0" value="1"/>
+                                    <ns1:ScoreDistribution confidence="0.4" recordCount="138.0" value="2"/>
+                                </ns1:Node>
+                                <ns1:Node recordCount="35.0" score="0">
+                                    <ns1:True/>
+                                    <ns1:ScoreDistribution confidence="0.625" recordCount="35.0" value="0"/>
+                                    <ns1:ScoreDistribution confidence="0.196428571429" recordCount="11.0" value="1"/>
+                                    <ns1:ScoreDistribution confidence="0.178571428571" recordCount="10.0" value="2"/>
+                                </ns1:Node>
+                            </ns1:Node>
+                            <ns1:Node recordCount="58.0" score="1">
+                                <ns1:True/>
+                                <ns1:ScoreDistribution confidence="0.465517241379" recordCount="27.0" value="0"/>
+                                <ns1:ScoreDistribution confidence="0.603448275862" recordCount="35.0" value="1"/>
+                                <ns1:ScoreDistribution confidence="0.362068965517" recordCount="21.0" value="2"/>
+                                <ns1:Node recordCount="34.0" score="1">
+                                    <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="1.56480169296"/>
+                                    <ns1:ScoreDistribution confidence="0.291666666667" recordCount="14.0" value="0"/>
+                                    <ns1:ScoreDistribution confidence="0.520833333333" recordCount="25.0" value="1"/>
+                                    <ns1:ScoreDistribution confidence="0.1875" recordCount="9.0" value="2"/>
+                                </ns1:Node>
+                                <ns1:Node recordCount="24.0" score="0">
+                                    <ns1:True/>
+                                    <ns1:ScoreDistribution confidence="0.371428571429" recordCount="13.0" value="0"/>
+                                    <ns1:ScoreDistribution confidence="0.285714285714" recordCount="10.0" value="1"/>
+                                    <ns1:ScoreDistribution confidence="0.342857142857" recordCount="12.0" value="2"/>
+                                </ns1:Node>
+                            </ns1:Node>
+                        </ns1:Node>
+                    </ns1:Node>
+                </ns1:TreeModel>
+            </ns1:Segment>
+            <ns1:Segment id="1">
+                <ns1:True/>
+                <ns1:TreeModel functionName="classification" splitCharacteristic="binarySplit">
+                    <ns1:MiningSchema>
+                        <ns1:MiningField invalidValueTreatment="asIs" name="col_0"/>
+                        <ns1:MiningField invalidValueTreatment="asIs" name="col_1"/>
+                        <ns1:MiningField invalidValueTreatment="asIs" name="col_2"/>
+                        <ns1:MiningField invalidValueTreatment="asIs" name="col_3"/>
+                        <ns1:MiningField name="internal::y" usageType="predicted"/>
+                    </ns1:MiningSchema>
+                    <ns1:Output>
+                        <ns1:OutputField dataType="integer" feature="predictedValue" name="y" optype="categorical"/>
+                        <ns1:OutputField dataType="double" feature="probability" name="y::0" optype="continuous" targetField="internal::y" value="0"/>
+                        <ns1:OutputField dataType="double" feature="probability" name="y::1" optype="continuous" targetField="internal::y" value="1"/>
+                        <ns1:OutputField dataType="double" feature="probability" name="y::2" optype="continuous" targetField="internal::y" value="2"/>
+                    </ns1:Output>
+                    <ns1:Node recordCount="336.0" score="1">
+                        <ns1:True/>
+                        <ns1:ScoreDistribution confidence="0.449404761905" recordCount="151.0" value="0"/>
+                        <ns1:ScoreDistribution confidence="0.5625" recordCount="189.0" value="1"/>
+                        <ns1:ScoreDistribution confidence="0.47619047619" recordCount="160.0" value="2"/>
+                        <ns1:Node recordCount="12.0" score="1">
+                            <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="-1.92965960503"/>
+                            <ns1:ScoreDistribution confidence="0.0" recordCount="0.0" value="0"/>
+                            <ns1:ScoreDistribution confidence="1.41666666667" recordCount="17.0" value="1"/>
+                            <ns1:ScoreDistribution confidence="0.166666666667" recordCount="2.0" value="2"/>
+                            <ns1:Node recordCount="10.0" score="1">
+                                <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="0.709010601044"/>
+                                <ns1:ScoreDistribution confidence="0.0" recordCount="0.0" value="0"/>
+                                <ns1:ScoreDistribution confidence="1.6" recordCount="16.0" value="1"/>
+                                <ns1:ScoreDistribution confidence="0.1" recordCount="1.0" value="2"/>
+                                <ns1:Node recordCount="3.0" score="1">
+                                    <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="-1.03807127476"/>
+                                    <ns1:ScoreDistribution confidence="0.0" recordCount="0.0" value="0"/>
+                                    <ns1:ScoreDistribution confidence="0.8" recordCount="4.0" value="1"/>
+                                    <ns1:ScoreDistribution confidence="0.2" recordCount="1.0" value="2"/>
+                                </ns1:Node>
+                                <ns1:Node recordCount="7.0" score="1">
+                                    <ns1:True/>
+                                    <ns1:ScoreDistribution confidence="0.0" recordCount="0.0" value="0"/>
+                                    <ns1:ScoreDistribution confidence="1.0" recordCount="12.0" value="1"/>
+                                    <ns1:ScoreDistribution confidence="0.0" recordCount="0.0" value="2"/>
+                                </ns1:Node>
+                            </ns1:Node>
+                            <ns1:Node recordCount="2.0" score="1">
+                                <ns1:True/>
+                                <ns1:ScoreDistribution confidence="0.0" recordCount="0.0" value="0"/>
+                                <ns1:ScoreDistribution confidence="0.5" recordCount="1.0" value="1"/>
+                                <ns1:ScoreDistribution confidence="0.5" recordCount="1.0" value="2"/>
+                                <ns1:Node recordCount="1.0" score="1">
+                                    <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="-2.05933618546"/>
+                                    <ns1:ScoreDistribution confidence="0.0" recordCount="0.0" value="0"/>
+                                    <ns1:ScoreDistribution confidence="1.0" recordCount="1.0" value="1"/>
+                                    <ns1:ScoreDistribution confidence="0.0" recordCount="0.0" value="2"/>
+                                </ns1:Node>
+                                <ns1:Node recordCount="1.0" score="2">
+                                    <ns1:True/>
+                                    <ns1:ScoreDistribution confidence="0.0" recordCount="0.0" value="0"/>
+                                    <ns1:ScoreDistribution confidence="0.0" recordCount="0.0" value="1"/>
+                                    <ns1:ScoreDistribution confidence="1.0" recordCount="1.0" value="2"/>
+                                </ns1:Node>
+                            </ns1:Node>
+                        </ns1:Node>
+                        <ns1:Node recordCount="324.0" score="1">
+                            <ns1:True/>
+                            <ns1:ScoreDistribution confidence="0.466049382716" recordCount="151.0" value="0"/>
+                            <ns1:ScoreDistribution confidence="0.530864197531" recordCount="172.0" value="1"/>
+                            <ns1:ScoreDistribution confidence="0.487654320988" recordCount="158.0" value="2"/>
+                            <ns1:Node recordCount="290.0" score="2">
+                                <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="1.3240275383"/>
+                                <ns1:ScoreDistribution confidence="0.472413793103" recordCount="137.0" value="0"/>
+                                <ns1:ScoreDistribution confidence="0.506896551724" recordCount="147.0" value="1"/>
+                                <ns1:ScoreDistribution confidence="0.520689655172" recordCount="151.0" value="2"/>
+                                <ns1:Node recordCount="279.0" score="2">
+                                    <ns1:SimplePredicate field="col_3" operator="lessOrEqual" value="1.9689218998"/>
+                                    <ns1:ScoreDistribution confidence="0.313397129187" recordCount="131.0" value="0"/>
+                                    <ns1:ScoreDistribution confidence="0.327751196172" recordCount="137.0" value="1"/>
+                                    <ns1:ScoreDistribution confidence="0.358851674641" recordCount="150.0" value="2"/>
+                                </ns1:Node>
+                                <ns1:Node recordCount="11.0" score="1">
+                                    <ns1:True/>
+                                    <ns1:ScoreDistribution confidence="0.352941176471" recordCount="6.0" value="0"/>
+                                    <ns1:ScoreDistribution confidence="0.588235294118" recordCount="10.0" value="1"/>
+                                    <ns1:ScoreDistribution confidence="0.0588235294118" recordCount="1.0" value="2"/>
+                                </ns1:Node>
+                            </ns1:Node>
+                            <ns1:Node recordCount="34.0" score="1">
+                                <ns1:True/>
+                                <ns1:ScoreDistribution confidence="0.411764705882" recordCount="14.0" value="0"/>
+                                <ns1:ScoreDistribution confidence="0.735294117647" recordCount="25.0" value="1"/>
+                                <ns1:ScoreDistribution confidence="0.205882352941" recordCount="7.0" value="2"/>
+                                <ns1:Node recordCount="2.0" score="1">
+                                    <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="1.34579753876"/>
+                                    <ns1:ScoreDistribution confidence="0.0" recordCount="0.0" value="0"/>
+                                    <ns1:ScoreDistribution confidence="1.0" recordCount="4.0" value="1"/>
+                                    <ns1:ScoreDistribution confidence="0.0" recordCount="0.0" value="2"/>
+                                </ns1:Node>
+                                <ns1:Node recordCount="32.0" score="1">
+                                    <ns1:True/>
+                                    <ns1:ScoreDistribution confidence="0.333333333333" recordCount="14.0" value="0"/>
+                                    <ns1:ScoreDistribution confidence="0.5" recordCount="21.0" value="1"/>
+                                    <ns1:ScoreDistribution confidence="0.166666666667" recordCount="7.0" value="2"/>
+                                </ns1:Node>
+                            </ns1:Node>
+                        </ns1:Node>
+                    </ns1:Node>
+                </ns1:TreeModel>
+            </ns1:Segment>
+            <ns1:Segment id="2">
+                <ns1:True/>
+                <ns1:TreeModel functionName="classification" splitCharacteristic="binarySplit">
+                    <ns1:MiningSchema>
+                        <ns1:MiningField invalidValueTreatment="asIs" name="col_0"/>
+                        <ns1:MiningField invalidValueTreatment="asIs" name="col_1"/>
+                        <ns1:MiningField invalidValueTreatment="asIs" name="col_2"/>
+                        <ns1:MiningField invalidValueTreatment="asIs" name="col_3"/>
+                        <ns1:MiningField name="internal::y" usageType="predicted"/>
+                    </ns1:MiningSchema>
+                    <ns1:Output>
+                        <ns1:OutputField dataType="integer" feature="predictedValue" name="y" optype="categorical"/>
+                        <ns1:OutputField dataType="double" feature="probability" name="y::0" optype="continuous" targetField="internal::y" value="0"/>
+                        <ns1:OutputField dataType="double" feature="probability" name="y::1" optype="continuous" targetField="internal::y" value="1"/>
+                        <ns1:OutputField dataType="double" feature="probability" name="y::2" optype="continuous" targetField="internal::y" value="2"/>
+                    </ns1:Output>
+                    <ns1:Node recordCount="321.0" score="1">
+                        <ns1:True/>
+                        <ns1:ScoreDistribution confidence="0.510903426791" recordCount="164.0" value="0"/>
+                        <ns1:ScoreDistribution confidence="0.570093457944" recordCount="183.0" value="1"/>
+                        <ns1:ScoreDistribution confidence="0.476635514019" recordCount="153.0" value="2"/>
+                        <ns1:Node recordCount="21.0" score="1">
+                            <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="-1.47007727623"/>
+                            <ns1:ScoreDistribution confidence="0.333333333333" recordCount="7.0" value="0"/>
+                            <ns1:ScoreDistribution confidence="1.19047619048" recordCount="25.0" value="1"/>
+                            <ns1:ScoreDistribution confidence="0.190476190476" recordCount="4.0" value="2"/>
+                            <ns1:Node recordCount="6.0" score="0">
+                                <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="-2.19679045677"/>
+                                <ns1:ScoreDistribution confidence="0.833333333333" recordCount="5.0" value="0"/>
+                                <ns1:ScoreDistribution confidence="0.5" recordCount="3.0" value="1"/>
+                                <ns1:ScoreDistribution confidence="0.333333333333" recordCount="2.0" value="2"/>
+                                <ns1:Node recordCount="2.0" score="1">
+                                    <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="0.17954005301"/>
+                                    <ns1:ScoreDistribution confidence="0.0" recordCount="0.0" value="0"/>
+                                    <ns1:ScoreDistribution confidence="1.0" recordCount="3.0" value="1"/>
+                                    <ns1:ScoreDistribution confidence="0.0" recordCount="0.0" value="2"/>
+                                </ns1:Node>
+                                <ns1:Node recordCount="4.0" score="0">
+                                    <ns1:True/>
+                                    <ns1:ScoreDistribution confidence="0.714285714286" recordCount="5.0" value="0"/>
+                                    <ns1:ScoreDistribution confidence="0.0" recordCount="0.0" value="1"/>
+                                    <ns1:ScoreDistribution confidence="0.285714285714" recordCount="2.0" value="2"/>
+                                </ns1:Node>
+                            </ns1:Node>
+                            <ns1:Node recordCount="15.0" score="1">
+                                <ns1:True/>
+                                <ns1:ScoreDistribution confidence="0.133333333333" recordCount="2.0" value="0"/>
+                                <ns1:ScoreDistribution confidence="1.46666666667" recordCount="22.0" value="1"/>
+                                <ns1:ScoreDistribution confidence="0.133333333333" recordCount="2.0" value="2"/>
+                                <ns1:Node recordCount="12.0" score="1">
+                                    <ns1:SimplePredicate field="col_2" operator="lessOrEqual" value="0.618381023407"/>
+                                    <ns1:ScoreDistribution confidence="0.0" recordCount="0.0" value="0"/>
+                                    <ns1:ScoreDistribution confidence="0.952380952381" recordCount="20.0" value="1"/>
+                                    <ns1:ScoreDistribution confidence="0.047619047619" recordCount="1.0" value="2"/>
+                                </ns1:Node>
+                                <ns1:Node recordCount="3.0" score="0">
+                                    <ns1:True/>
+                                    <ns1:ScoreDistribution confidence="0.4" recordCount="2.0" value="0"/>
+                                    <ns1:ScoreDistribution confidence="0.4" recordCount="2.0" value="1"/>
+                                    <ns1:ScoreDistribution confidence="0.2" recordCount="1.0" value="2"/>
+                                </ns1:Node>
+                            </ns1:Node>
+                        </ns1:Node>
+                        <ns1:Node recordCount="300.0" score="1">
+                            <ns1:True/>
+                            <ns1:ScoreDistribution confidence="0.523333333333" recordCount="157.0" value="0"/>
+                            <ns1:ScoreDistribution confidence="0.526666666667" recordCount="158.0" value="1"/>
+                            <ns1:ScoreDistribution confidence="0.496666666667" recordCount="149.0" value="2"/>
+                            <ns1:Node recordCount="39.0" score="2">
+                                <ns1:SimplePredicate field="col_0" operator="lessOrEqual" value="-0.854827046394"/>
+                                <ns1:ScoreDistribution confidence="0.487179487179" recordCount="19.0" value="0"/>
+                                <ns1:ScoreDistribution confidence="0.230769230769" recordCount="9.0" value="1"/>
+                                <ns1:ScoreDistribution confidence="0.74358974359" recordCount="29.0" value="2"/>
+                                <ns1:Node recordCount="2.0" score="1">
+                                    <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="-1.53912472725"/>
+                                    <ns1:ScoreDistribution confidence="0.0" recordCount="0.0" value="0"/>
+                                    <ns1:ScoreDistribution confidence="1.0" recordCount="2.0" value="1"/>
+                                    <ns1:ScoreDistribution confidence="0.0" recordCount="0.0" value="2"/>
+                                </ns1:Node>
+                                <ns1:Node recordCount="37.0" score="2">
+                                    <ns1:True/>
+                                    <ns1:ScoreDistribution confidence="0.345454545455" recordCount="19.0" value="0"/>
+                                    <ns1:ScoreDistribution confidence="0.127272727273" recordCount="7.0" value="1"/>
+                                    <ns1:ScoreDistribution confidence="0.527272727273" recordCount="29.0" value="2"/>
+                                </ns1:Node>
+                            </ns1:Node>
+                            <ns1:Node recordCount="261.0" score="1">
+                                <ns1:True/>
+                                <ns1:ScoreDistribution confidence="0.528735632184" recordCount="138.0" value="0"/>
+                                <ns1:ScoreDistribution confidence="0.570881226054" recordCount="149.0" value="1"/>
+                                <ns1:ScoreDistribution confidence="0.459770114943" recordCount="120.0" value="2"/>
+                                <ns1:Node recordCount="7.0" score="1">
+                                    <ns1:SimplePredicate field="col_1" operator="lessOrEqual" value="-2.00775241852"/>
+                                    <ns1:ScoreDistribution confidence="0.0" recordCount="0.0" value="0"/>
+                                    <ns1:ScoreDistribution confidence="0.9" recordCount="9.0" value="1"/>
+                                    <ns1:ScoreDistribution confidence="0.1" recordCount="1.0" value="2"/>
+                                </ns1:Node>
+                                <ns1:Node recordCount="254.0" score="1">
+                                    <ns1:True/>
+                                    <ns1:ScoreDistribution confidence="0.347607052897" recordCount="138.0" value="0"/>
+                                    <ns1:ScoreDistribution confidence="0.352644836272" recordCount="140.0" value="1"/>
+                                    <ns1:ScoreDistribution confidence="0.299748110831" recordCount="119.0" value="2"/>
+                                </ns1:Node>
+                            </ns1:Node>
+                        </ns1:Node>
+                    </ns1:Node>
+                </ns1:TreeModel>
+            </ns1:Segment>
+        </ns1:Segmentation>
+    </ns1:MiningModel>
+</ns1:PMML>

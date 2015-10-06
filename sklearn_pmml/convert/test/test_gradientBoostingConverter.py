@@ -3,7 +3,8 @@ from unittest import TestCase
 from sklearn.ensemble import GradientBoostingClassifier
 import numpy as np
 
-from sklearn_pmml.convert import TransformationContext
+from sklearn_pmml.convert.test.jpmml_test import JPMMLClassificationTest, JPMMLTest, TARGET_NAME
+from sklearn_pmml.convert import TransformationContext, Schema
 from sklearn_pmml.convert.features import *
 from sklearn_pmml.convert.gbrt import GradientBoostingConverter
 
@@ -18,12 +19,20 @@ class TestGradientBoostingClassifierConverter(TestCase):
             [1, 0],
             [1, 1],
         ], [0, 1, 1, 1])
-        self.ctx = TransformationContext(
-            input=[IntegerNumericFeature('x1'), StringCategoricalFeature('x2', ['zero', 'one'])],
-            derived=[],
-            model=[IntegerNumericFeature('x1'), StringCategoricalFeature('x2', ['zero', 'one'])],
-            output=[RealNumericFeature('output')]
-        )
+        self.ctx = TransformationContext({
+            Schema.INPUT: [
+                IntegerNumericFeature('x1'),
+                StringCategoricalFeature('x2', ['zero', 'one'])
+            ],
+            Schema.MODEL: [
+                IntegerNumericFeature('x1'),
+                StringCategoricalFeature('x2', ['zero', 'one'])
+            ],
+            Schema.DERIVED: [],
+            Schema.OUTPUT: [
+                IntegerCategoricalFeature('output', [0, 1])
+            ]
+        })
         self.converter = GradientBoostingConverter(
             estimator=self.est,
             context=self.ctx
@@ -33,7 +42,7 @@ class TestGradientBoostingClassifierConverter(TestCase):
         p = self.converter.pmml()
         mm = p.MiningModel[0]
         assert mm.MiningSchema is not None, 'Missing mining schema'
-        assert len(mm.MiningSchema.MiningField) == 3, 'Wrong number of mining fields'
+        assert len(mm.MiningSchema.MiningField) == 2, 'Wrong number of mining fields'
         assert mm.Segmentation is not None, 'Missing segmentation root'
 
     def test_transform_with_verification(self):
@@ -45,6 +54,21 @@ class TestGradientBoostingClassifierConverter(TestCase):
         ])
         mm = p.MiningModel[0]
         assert mm.MiningSchema is not None, 'Missing mining schema'
-        assert len(mm.MiningSchema.MiningField) == 3, 'Wrong number of mining fields'
+        assert len(mm.MiningSchema.MiningField) == 2, 'Wrong number of mining fields'
         assert mm.Segmentation is not None, 'Missing segmentation root'
 
+
+class TestGradientBoostingClassifierParity(TestCase, JPMMLClassificationTest):
+
+    @classmethod
+    def setUpClass(cls):
+        if JPMMLTest.can_run():
+            JPMMLTest.init_jpmml()
+
+    def setUp(self):
+        self.model = GradientBoostingClassifier(n_estimators=2, max_depth=2)
+        self.init_data_one_label()
+        self.converter = GradientBoostingConverter(
+            estimator=self.model,
+            context=self.ctx
+        )

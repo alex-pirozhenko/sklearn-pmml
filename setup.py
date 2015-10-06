@@ -24,8 +24,8 @@ class PyTest(Command):
 
 setup(
     name='sklearn-pmml',
-    version='0.0.1',
-    packages=['sklearn_pmml', 'sklearn_pmml.convert', 'sklearn_pmml.convert.test'],
+    version='0.0.2',
+    packages=['sklearn_pmml', 'sklearn_pmml.convert'],
     install_requires=required,
     cmdclass={'test': PyTest},
     url='https://github.com/alex-pirozhenko/sklearn-pmml',
