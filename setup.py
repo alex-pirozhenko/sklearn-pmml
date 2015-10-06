@@ -1,10 +1,4 @@
-import os
-
 from setuptools import setup, Command
-
-
-with open(os.path.join(os.path.dirname(__file__), 'requirements.txt')) as f:
-    required = f.read().splitlines()
 
 
 class PyTest(Command):
@@ -24,9 +18,17 @@ class PyTest(Command):
 
 setup(
     name='sklearn-pmml',
-    version='0.0.2',
+    version='0.1.0',
     packages=['sklearn_pmml', 'sklearn_pmml.convert'],
-    install_requires=required,
+    install_requires=[
+        "pyxb",
+        "scikit-learn",
+        "pandas",
+        "scipy",
+        "pytest",
+        "lxml",
+        "enum34",
+    ],
     cmdclass={'test': PyTest},
     url='https://github.com/alex-pirozhenko/sklearn-pmml',
     license='MIT',
