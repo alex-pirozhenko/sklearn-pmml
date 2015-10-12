@@ -111,8 +111,9 @@ class CategoricalFeature(Feature):
     dataType. The corresponding derived field will have a double data type and will be defined as a MapValues PMML
     element.
     """
-    def __init__(self, name, value_list, namespace='', invalid_value_treatment=InvalidValueTreatment.AS_IS):
+    def __init__(self, name, value_list, namespace='', invalid_value_treatment=InvalidValueTreatment.AS_IS, map_missing_to=None):
         super(CategoricalFeature, self).__init__(name, namespace, invalid_value_treatment)
+        self.map_missing_to = map_missing_to
         self.value_list = value_list
 
     @property
@@ -128,7 +129,13 @@ class CategoricalFeature(Feature):
         """
         Transform categorical value to the ordinal. Raises ValueError if value is not in self.value_list
         """
-        return list(self.value_list).index(value)
+        try:
+            return list(self.value_list).index(value)
+        except ValueError as e:
+            if self.map_missing_to:
+                return self.map_missing_to
+            else:
+                raise e
 
 
 class IntegerCategoricalFeature(CategoricalFeature):
