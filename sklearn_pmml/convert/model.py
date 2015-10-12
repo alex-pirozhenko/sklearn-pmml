@@ -268,7 +268,7 @@ class EstimatorConverter(object):
         # building model results
         assert len(self.context.schemas[Schema.OUTPUT]) == 1, 'Only one output is currently supported'
         key = self.context.schemas[Schema.OUTPUT][0]
-        model_input = verification_model_input[map(Schema.MODEL.extract_feature_name, self.context.schemas[Schema.MODEL])].values
+        model_input = verification_model_input[list(map(Schema.MODEL.extract_feature_name, self.context.schemas[Schema.MODEL]))].values
         model_results = np.vectorize(key.from_number)(self.estimator.predict(X=model_input))
         if key.full_name in verification_data:
             # make sure that if results are provided, the expected and actual values are equal
@@ -284,7 +284,7 @@ class EstimatorConverter(object):
         field_names = []
         for s in [Schema.INPUT, Schema.OUTPUT, Schema.CATEGORIES]:
             fields += self.context.schemas[s]
-            field_names += map(s.extract_feature_name, self.context.schemas[s])
+            field_names += list(map(s.extract_feature_name, self.context.schemas[s]))
 
         mv = pmml.ModelVerification(recordCount=len(verification_input), fieldCount=len(fields))
 
