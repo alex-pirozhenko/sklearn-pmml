@@ -23,7 +23,7 @@ pip install sklearn-pmml
 Classifier converters can only operate with categorical outputs, and for each categorical output variable ```varname``` 
 the PMML output contains the following outputs:
 - categorical ```varname``` for the predicted label of the instance
-- double ```varname::label``` for the probability for a given label
+- double ```varname.label``` for the probability for a given label
 
 ## Regression
 Regression model PMML outputs the numeric response variable named as the output variable

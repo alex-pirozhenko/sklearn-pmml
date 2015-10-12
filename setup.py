@@ -18,7 +18,7 @@ class PyTest(Command):
 
 setup(
     name='sklearn-pmml',
-    version='0.1.0',
+    version='0.1.1',
     packages=['sklearn_pmml', 'sklearn_pmml.convert'],
     install_requires=[
         "pyxb",

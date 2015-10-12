@@ -2,7 +2,7 @@ from collections import defaultdict
 from enum import Enum
 from sklearn.base import ClassifierMixin, RegressorMixin, BaseEstimator
 from sklearn_pmml import pmml
-from sklearn_pmml.convert.utils import pmml_row
+from sklearn_pmml.convert.utils import pmml_row, assert_equal
 from sklearn_pmml.convert.features import *
 from pyxb.utils.domutils import BindingDOMSupport as bds
 import numpy as np
@@ -36,7 +36,7 @@ class Schema(Enum):
     OUTPUT = ('output', True, True)
     """
     Schema used to define output variables. Short names allowed. For the categorical variables the continuous
-    probability variables will be automatically created as <feature_name>::<feature_value>
+    probability variables will be automatically created as <feature_name>.<feature_value>
     """
 
     DERIVED = ('derived', False, False)
@@ -105,7 +105,7 @@ class Schema(Enum):
             else:
                 return f.full_name
         else:
-            return "{}::{}".format(self.namespace, f if isinstance(f, str) else f.full_name)
+            return "{}.{}".format(self.namespace, f if isinstance(f, str) else f.full_name)
 
 
 class EstimatorConverter(object):
@@ -234,35 +234,78 @@ class EstimatorConverter(object):
 
     def model_verification(self, verification_data):
         """
-        Build a model verification dataset
-        :param verification_data: list of dictionaries
+        Use the input verification_data, apply the transformations, evaluate the model response and produce the
+        ModelVerification element
+        :param verification_data: list of dictionaries or data frame
+        :type verification_data: dict[str, object]|pd.DataFrame
         :return: ModelVerification element
         """
         verification_data = pd.DataFrame(verification_data)
-        fields = self.context.schemas[Schema.INPUT] + self.context.schemas[Schema.OUTPUT]
         assert len(verification_data) > 0, 'Verification data can not be empty'
-        assert len(verification_data.columns) == len(fields), \
-            'Number of fields in validation data should match to input and output schema fields'
-        mv = pmml.ModelVerification(recordCount=len(verification_data), fieldCount=len(verification_data.columns))
+
+        verification_input = pd.DataFrame(index=verification_data.index)
+        verification_model_input = pd.DataFrame(index=verification_data.index)
+        for key in self.context.schemas[Schema.INPUT]:
+            # all input features MUST be present in the verification_data
+            assert key.full_name in verification_data.columns, 'Missing input field "{}"'.format(key.full_name)
+            verification_input[Schema.INPUT.extract_feature_name(key)] = verification_data[key.full_name]
+            if isinstance(key, CategoricalFeature):
+                verification_model_input[Schema.INPUT.extract_feature_name(key)] = np.vectorize(key.to_number)(verification_data[key.full_name])
+            else:
+                verification_model_input[Schema.INPUT.extract_feature_name(key)] = verification_data[key.full_name]
+
+        for key in self.context.schemas[Schema.DERIVED]:
+            assert isinstance(key, DerivedFeature), 'Only DerivedFeatures are allowed in the DERIVED schema'
+            verification_model_input[key.full_name] = key.apply(verification_input)
+
+        # at this point we can check that MODEL schema contains only known features
+        for key in self.context.schemas[Schema.MODEL]:
+            assert Schema.MODEL.extract_feature_name(key) in verification_model_input.columns, \
+                'Unknown feature "{}" in the MODEL schema'.format(key.full_name)
+
+        # TODO: we can actually support multiple columns, but need to figure out the way to extract the data
+        # TODO: from the estimator properly
+        # building model results
+        assert len(self.context.schemas[Schema.OUTPUT]) == 1, 'Only one output is currently supported'
+        key = self.context.schemas[Schema.OUTPUT][0]
+        model_input = verification_model_input[map(Schema.MODEL.extract_feature_name, self.context.schemas[Schema.MODEL])].values
+        model_results = np.vectorize(key.from_number)(self.estimator.predict(X=model_input))
+        if key.full_name in verification_data:
+            # make sure that if results are provided, the expected and actual values are equal
+            assert_equal(key, model_results, verification_data[key.full_name].values)
+        verification_input[Schema.OUTPUT.extract_feature_name(key)] = model_results
+
+        if isinstance(key, CategoricalFeature):
+            probabilities = self.estimator.predict_proba(X=model_input)
+            for i, key in enumerate(self.context.schemas[Schema.CATEGORIES]):
+                verification_input[Schema.CATEGORIES.extract_feature_name(key)] = probabilities[:, i]
+
+        fields = []
+        field_names = []
+        for s in [Schema.INPUT, Schema.OUTPUT, Schema.CATEGORIES]:
+            fields += self.context.schemas[s]
+            field_names += map(s.extract_feature_name, self.context.schemas[s])
+
+        mv = pmml.ModelVerification(recordCount=len(verification_input), fieldCount=len(fields))
 
         # step one: build verification schema
         verification_fields = pmml.VerificationFields()
-        for f in fields:
-            if isinstance(f, NumericFeature):
-                vf = pmml.VerificationField(field=f.name, column=f.name, precision=self.EPSILON)
+        for key in fields:
+            if isinstance(key, NumericFeature):
+                vf = pmml.VerificationField(field=key.name, column=key.name, precision=self.EPSILON)
             else:
-                vf = pmml.VerificationField(field=f.name, column=f.name)
+                vf = pmml.VerificationField(field=key.name, column=key.name)
             verification_fields.append(vf)
         mv.append(verification_fields)
 
         # step two: build data table
         it = pmml.InlineTable()
-        for data in verification_data.iterrows():
+        for data in verification_input.iterrows():
             data = data[1]
             row = pmml.row()
             row_empty = True
-            for key in verification_data.columns:
-                if verification_data[key].dtype == object or not np.isnan(data[key]):
+            for key in field_names:
+                if verification_input[key].dtype == object or not np.isnan(data[key]):
                     col = bds().createChildElement(key)
                     bds().appendTextChild(data[key], col)
                     row.append(col)
@@ -342,7 +385,7 @@ class ClassifierConverter(EstimatorConverter):
         """
         Output section of PMML contains all model outputs.
         Classification tree output contains output variable as a label,
-        and <variable>::<value> as a probability of a value for a variable
+        and <variable>.<value> as a probability of a value for a variable
         :return: pmml.Output
         """
         output = pmml.Output()

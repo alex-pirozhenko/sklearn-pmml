@@ -49,7 +49,7 @@ class Feature(object):
         :rtype: str
         """
         if self._namespace:
-            return '{}::{}'.format(self._namespace, self.name)
+            return '{}.{}'.format(self._namespace, self.name)
         else:
             return self.name
 
@@ -78,7 +78,7 @@ class Feature(object):
         return self.name
 
     def __repr__(self):
-        return "{}::{}".format(self.name, self.__class__.__name__)
+        return "{}#{}".format(self.name, self.__class__.__name__)
 
 
 class NumericFeature(Feature):
@@ -124,6 +124,12 @@ class CategoricalFeature(Feature):
         assert value < len(self.value_list), 'Unknown category index {}'.format(value)
         return self.value_list[value]
 
+    def to_number(self, value):
+        """
+        Transform categorical value to the ordinal. Raises ValueError if value is not in self.value_list
+        """
+        return list(self.value_list).index(value)
+
 
 class IntegerCategoricalFeature(CategoricalFeature):
     @property
@@ -147,12 +153,14 @@ class DerivedFeature(NumericFeature):
     For convenience, one can also pass the function that performs the transformation on the input data frame.
     """
 
-    def __init__(self, feature, transformation, function=None):
+    def __init__(self, feature, transformation, function):
         """
         Construct a derived feature.
         :param feature: declaration of feature (name, data_type and optype)
+        :type feature: Feature
         :param transformation: definition of DerivedField content
         :param function: transformation function
+        :type function: callable
         """
         super(DerivedFeature, self).__init__(
             name=feature.name,
@@ -160,6 +168,8 @@ class DerivedFeature(NumericFeature):
             invalid_value_treatment=feature.invalid_value_treatment
         )
         assert isinstance(feature, NumericFeature), 'All derived features must be declared as NumericFeatures'
+        assert function is not None, 'Function can not be None'
+        assert callable(function), 'Function must be callable'
         self.feature = feature
         self.transformation = transformation
         self.function = function
@@ -167,9 +177,11 @@ class DerivedFeature(NumericFeature):
     def from_number(self, value):
         return self.feature.from_number(value)
 
+    @property
     def data_type(self):
         return self.feature.data_type
 
+    @property
     def optype(self):
         return self.feature.optype
 

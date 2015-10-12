@@ -1,5 +1,6 @@
 from functools import partial
 from sklearn_pmml import pmml
+from sklearn_pmml.convert.features import Feature, FeatureType
 from pyxb.utils.domutils import BindingDOMSupport as bds
 import numpy as np
 estimator_to_converter = {}
@@ -162,3 +163,21 @@ class DerivedFeatureTransformations(object):
                 DerivedFeatureTransformations.FUNCTION: lambda df: np.where(df[field].isnull(), replacement, df[field])
             }
 
+
+def assert_equal(feature, expected, actual):
+    """
+    Compare expected and actual values for the feature and raise an exception if they are not equal
+    :type feature: Feature
+    :type expected: np.array
+    :type actual: np.array
+    """
+    # if the feature has the transformation included and the result data is passed, we can compare them
+    if feature.data_type == FeatureType.STRING:
+        assert all(actual == expected), \
+            'Some passed values of "{}" don\'t match the evaluated results'.format(feature.full_name)
+    else:
+        np.testing.assert_almost_equal(
+            actual,
+            expected,
+            err_msg='Some passed values of "{}" don\'t match the evaluated results'.format(feature.full_name)
+        )
