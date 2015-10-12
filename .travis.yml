@@ -19,7 +19,7 @@ before_install:
   - travis_retry conda install --yes python=$TRAVIS_PYTHON_VERSION pip numpy scipy scikit-learn pandas lxml
 
 install:
-  - travis_retry pip install -r requirements.txt
+  - travis_retry pip install .
 # command to run tests
 script: python setup.py test
 cache: apt

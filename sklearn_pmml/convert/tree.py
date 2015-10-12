@@ -64,7 +64,7 @@ class DecisionTreeConverter(EstimatorConverter):
             'Either build transformation dictionary or provide {} schema in context'.format(Schema.NUMERIC)
         tm = self._model()
         if verification_data is not None:
-            tm.append(self.model_verification(verification_data))
+            tm.ModelVerification = self.model_verification(verification_data)
         return tm
 
     def _transform_node(self, tree, index, input_schema, output_feature, enter_condition=None):
@@ -132,7 +132,7 @@ class DecisionTreeConverter(EstimatorConverter):
         """
         Output section of PMML contains all model outputs.
         Classification tree output contains output variable as a label,
-        and <variable>::<value> as a probability of a value for a variable
+        and <variable>#<value> as a probability of a value for a variable
         :return: pmml.Output
         """
         output = pmml.Output()

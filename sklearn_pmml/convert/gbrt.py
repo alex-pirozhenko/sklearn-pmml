@@ -4,7 +4,8 @@ from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.ensemble.gradient_boosting import LogOddsEstimator
 
 from sklearn_pmml.convert.features import *
-from sklearn_pmml.convert.model import EstimatorConverter, ClassifierConverter, ModelMode, RegressionConverter, Schema
+from sklearn_pmml.convert.model import EstimatorConverter, ClassifierConverter, ModelMode, RegressionConverter, Schema, \
+    TransformationContext
 from sklearn_pmml.convert.tree import DecisionTreeConverter
 import sklearn_pmml.pmml as pmml
 from sklearn_pmml.convert.utils import estimator_to_converter, find_converter
@@ -141,10 +142,10 @@ class GradientBoostingConverter(ClassifierConverter):
 
         # build the context for the nested regression models by replacing output categorical feature
         # with the continuous numeric feature
-        regression_context = copy(self.context)
+        regression_context = TransformationContext(schemas=dict(self.context.schemas))
         regression_context.schemas[Schema.OUTPUT] = [RealNumericFeature(
             name=self.context.schemas[Schema.OUTPUT][0].name,
-            namespace=Schema.NUMERIC.value
+            namespace=Schema.NUMERIC.namespace
         )]
 
         # first, transform initial estimator

@@ -62,11 +62,17 @@ class TestDecisionTreeClassifierConverter(TestCase):
         mapping.append(pmml.FieldColumnPair(column="x1", field="x1"))
         mapping.append(pmml.FieldColumnPair(column="x2", field="x2"))
         it = pmml.InlineTable()
-        it.append(pmml_row(x1=0, x2='zero', output=0))
-        it.append(pmml_row(x1=0, x2='one', output=0))
-        it.append(pmml_row(x1=1, x2='zero', output=0))
-        it.append(pmml_row(x1=1, x2='one', output=1))
+        mapping_df = pd.DataFrame([
+            dict(x1=0, x2='zero', output=0),
+            dict(x1=0, x2='one', output=0),
+            dict(x1=1, x2='zero', output=0),
+            dict(x1=1, x2='one', output=1),
+        ])
+        for idx, line in mapping_df.iterrows():
+            it.append(pmml_row(**dict(line)))
         mapping.append(it)
+        mapping_df.set_index(keys=['x1', 'x2'])
+        mapping_f = np.vectorize(lambda x1, x2: mapping_df.ix[x1, x2].output.values[0])
         self.ctx = TransformationContext({
             Schema.INPUT: [
                 IntegerNumericFeature('x1'),
@@ -75,7 +81,8 @@ class TestDecisionTreeClassifierConverter(TestCase):
             Schema.DERIVED: [
                 DerivedFeature(
                     feature=RealNumericFeature(name='x3'),
-                    transformation=mapping
+                    transformation=mapping,
+                    function=mapping_f
                 )
             ],
             Schema.MODEL: [

@@ -47,10 +47,10 @@ class TestGradientBoostingClassifierConverter(TestCase):
 
     def test_transform_with_verification(self):
         p = self.converter.pmml([
-            {'x1': 0, 'x2': 'zero', 'output': self.est.predict_proba([[0, 0]])[0, 1]},
-            {'x1': 0, 'x2': 'one', 'output': self.est.predict_proba([[0, 1]])[0, 1]},
-            {'x1': 1, 'x2': 'zero', 'output': self.est.predict_proba([[1, 0]])[0, 1]},
-            {'x1': 1, 'x2': 'one', 'output': self.est.predict_proba([[1, 1]])[0, 1]},
+            {'x1': 0, 'x2': 'zero', 'output#1': self.est.predict_proba([[0, 0]])[0, 1], 'output#0': self.est.predict_proba([[0, 0]])[0, 0], 'output': self.est.predict([[0, 0]])},
+            {'x1': 0, 'x2': 'one', 'output#1': self.est.predict_proba([[0, 1]])[0, 1], 'output#0': self.est.predict_proba([[0, 1]])[0, 0], 'output': self.est.predict([[0, 1]])},
+            {'x1': 1, 'x2': 'zero', 'output#1': self.est.predict_proba([[1, 0]])[0, 1], 'output#0': self.est.predict_proba([[1, 0]])[0, 0], 'output': self.est.predict([[1, 0]])},
+            {'x1': 1, 'x2': 'one', 'output#1': self.est.predict_proba([[1, 1]])[0, 1], 'output#0': self.est.predict_proba([[1, 1]])[0, 0], 'output': self.est.predict([[1, 1]])},
         ])
         mm = p.MiningModel[0]
         assert mm.MiningSchema is not None, 'Missing mining schema'

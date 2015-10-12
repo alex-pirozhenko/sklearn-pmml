@@ -3,6 +3,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn_pmml import EstimatorConverter, TransformationContext, pmml
 from sklearn_pmml.convert import Schema, ModelMode
 from sklearn_pmml.convert.features import *
+import numpy as np
 
 test_cases = [
     (
@@ -12,7 +13,8 @@ test_cases = [
         [
             DerivedFeature(
                 feature=RealNumericFeature(name='f2'),
-                transformation=pmml.Discretize(mapMissingTo=0, defaultValue=1, field='f1')
+                transformation=pmml.Discretize(mapMissingTo=0, defaultValue=1, field='f1'),
+                function=np.vectorize(lambda f1: 0 if f1 is None else 1)
             )
         ],
         [RealNumericFeature(name='f3')],
